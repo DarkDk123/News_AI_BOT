@@ -15,7 +15,7 @@ generation_config = {
     "temperature": 0.9,
     "top_p": 1,
     "top_k": 1,
-    "max_output_tokens": 200,
+    # "max_output_tokens": 200,
 }
 
 
@@ -32,6 +32,7 @@ class GeminiAI:
     def generate_text(
         self,
         input_: str,
-    ) -> generation_types.GenerateContentResponse:
-        return self.model.generate_content(input_)
+    ) -> str:
+        return self.model.generate_content(input_).text
+    
 
