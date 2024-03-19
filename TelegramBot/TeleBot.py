@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 from aiogram import Bot, Dispatcher, Router, types
 from aiogram.enums import ParseMode
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, Filter, Command
 from aiogram.utils import markdown
 from aiogram import exceptions as aio_exceptions
 
@@ -33,7 +33,33 @@ async def command_start_handler(message: types.Message) -> None:
     await message.answer(text=f"Hello, {markdown.hbold(message.from_user.full_name)}!")
 
 
+@dp.message(
+    Command("create", "bnao"),
+)
+async def command_create_handler(message: types.Message) -> None:
+    await message.reply(text="Created Something ✅")
+
+
+@dp.message(Command("do"))
+@dp.message(lambda message: "dipesh" in message.text)
+async def temp(message: types.Message) -> None:
+    replay = await message.answer(
+        "Hi there! What's your name?",
+        reply_to_message_id=message.message_id,
+        reply_markup=types.ForceReply(
+            keyboard=[
+                [types.KeyboardButton(text="Done")],
+                [
+                    types.KeyboardButton(text="Button 2"),
+                    types.KeyboardButton(text="Button 3"),
+                ],
+            ],
+        ),
+    )
+
+
 @dp.message()
+@dp.edited_message()
 async def AI_response(message: types.Message) -> None:
     """
     Responds to a message with an AI-generated text.
@@ -55,7 +81,7 @@ async def AI_response(message: types.Message) -> None:
         # But not all the types is supported to be copied so need to handle it
         await message.answer(text="Nice try!")
     except aio_exceptions.TelegramBadRequest:
-        await message.answer(text="Try Again!!")
+        await message.answer(text="Bad Request 🥲\n Try Again!!")
 
 
 async def main() -> None:
