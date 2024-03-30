@@ -22,4 +22,4 @@ class NewsAPI(NewsApiClient):
 
 class NewsDataAPI(NewsDataApiClient):
     def __init__(self) -> None:
-        super().__init__(apikey=os.environ.get("NEWSDATA_KEY"))
+        super().__init__(apikey=os.environ.get("NEWSDATA_KEY")) # type: ignore

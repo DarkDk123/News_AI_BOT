@@ -6,17 +6,13 @@ import os
 # ---------------Other_Imports----------------------------------
 from google.generativeai import types
 
-
-# Load the API Keys from .env file
-load_dotenv()
-
 # Generation Configuration for Gemini-Pro
-generation_config:dict[str, int|float] = {
-    "temperature": 0.9,
-    "top_p": 1,
-    "top_k": 1,
-    # "max_output_tokens": 200,
-}
+generation_config = types.GenerationConfig(
+    temperature=0.9,
+    top_k=1,
+    top_p=1,
+    # max_output_tokens=200
+)
 
 
 class GeminiAI:
@@ -27,14 +23,18 @@ class GeminiAI:
         )
 
         # Model creation
-        self.model = genai.GenerativeModel(model_name=model, generation_config=generation_config)
-        self.chat : genai.ChatSession = None
+        self.model = genai.GenerativeModel(
+            model_name=model, generation_config=generation_config
+        )
+        self.chat: genai.ChatSession = None  # type: ignore
 
     async def generate_text_async(
         self,
         input_: str,
     ) -> str:
-        async_response: types.AsyncGenerateContentResponse = await self.model.generate_content_async(contents=input_)
+        async_response: types.AsyncGenerateContentResponse = (
+            await self.model.generate_content_async(contents=input_)
+        )
         return async_response.text
 
     def _create_chat(self) -> None:

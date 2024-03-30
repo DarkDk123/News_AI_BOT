@@ -4,18 +4,19 @@ import sys
 import os
 from dotenv import load_dotenv
 
-from aiogram import Bot, Dispatcher, Router, types
+from aiogram import Bot, Dispatcher, types, F, filters
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart, Filter, Command
 from aiogram.utils import markdown
 from aiogram import exceptions as aio_exceptions
+from aiogram.client.default import DefaultBotProperties
 
 sys.path.append("../")
 from GenAI.Gemini import GeminiAI
 
 # Bot token can be obtained via https://t.me/BotFather
 load_dotenv()
-TOKEN: str = os.getenv("TELEGRAM_BOT_TOKEN")
+TOKEN: str = str(os.getenv("TELEGRAM_BOT_TOKEN"))
 
 # All handlers should be attached to the Router (or Dispatcher)
 dp = Dispatcher()
@@ -30,7 +31,10 @@ async def command_start_handler(message: types.Message) -> None:
     """
     This handler receives messages with `/start` command
     """
-    await message.answer(text=f"Hello, {markdown.hbold(message.from_user.full_name)}!")
+    await message.answer(
+        text=f"Hello, {markdown.bold(message.from_user.full_name)}!",  # type: ignore
+        parse_mode="Markdown"
+    )
 
 
 @dp.message(
@@ -41,7 +45,7 @@ async def command_create_handler(message: types.Message) -> None:
 
 
 @dp.message(Command("do"))
-@dp.message(lambda message: "dipesh" in message.text)
+# @dp.message(lambda message: "dipesh" in message.text)
 async def temp(message: types.Message) -> None:
     replay = await message.answer(
         "Hi there! What's your name?",
@@ -58,6 +62,11 @@ async def temp(message: types.Message) -> None:
     )
 
 
+@dp.message(F.photo)
+async def msg(message: types.Message):
+    await message.reply("WOW!! SO ELEGENT!")
+
+
 @dp.message()
 @dp.edited_message()
 async def AI_response(message: types.Message) -> None:
@@ -71,22 +80,22 @@ async def AI_response(message: types.Message) -> None:
     try:
         # Send a copy of the received message
         await message.answer(
-            text=await AI.generate_text_async_chat(input_=message.text),
+            text=await AI.generate_text_async_chat(input_=message.text),  # type:ignore
             parse_mode="markdown",
         )
     except ValueError:
         # If AI returned None!
-        await message.answer(text="Please try again with other input!")
+        await message.answer(text="Please try again with other input!", show_alert=True)
     except TypeError:
         # But not all the types is supported to be copied so need to handle it
-        await message.answer(text="Nice try!")
+        await message.answer(text="Nice try!", show_alert=True)
     except aio_exceptions.TelegramBadRequest:
         await message.answer(text="Bad Request 🥲\n Try Again!!")
 
 
 async def main() -> None:
     # Initialize Bot instance with a default parse mode which will be passed to all API calls
-    bot = Bot(token=TOKEN, parse_mode=ParseMode.HTML)
+    bot = Bot(token=TOKEN)
     # And the run events dispatching
     await dp.start_polling(bot)
 
