@@ -5,28 +5,51 @@ This file Routes all the commands gives to BOT
 using `command_router` from `routers.py`.
 """
 
+from multiprocessing.connection import answer_challenge
 from aiogram import filters, types, F
 from aiogram.utils import markdown
 
 from .routers import command_router
 
 
-@command_router.message(filters.Command("start"))
+# Start/Restart the Conversation
+@command_router.message(filters.Command("start", "restart", ignore_case=True))
 async def start(message: types.Message) -> None:
-    await message.answer(f"Hy, {markdown.bold(message.from_user.first_name)}\nNice to see you")  # type: ignore
+    await message.answer(f"Hy, {markdown.bold(message.from_user.first_name)}\nNice to see you \n {{BOT Description}}")  # type: ignore
 
 
-@command_router.message(filters.Command("help"))
-async def help(message: types.Message) -> None:
-    await message.answer("I'm willing to help you, but I can't!! 😅")
+# Help command : shows list of commands
+@command_router.message(filters.Command("help", ignore_case=True))
+async def help_(message: types.Message) -> None:
+    await message.answer("This command will show you help. (list of commands)")
 
 
-@command_router.message(F.text.casefold() == "am i admin?")
-async def admin(message: types.Message) -> None:
-    # Needs to change, read docs!
-    if filters.IS_ADMIN:
-        await message.answer("Yes, you're an Admin")
-    else:
-        await message.answer("No bro!")
+# Destroys User Data if registered.
+@command_router.message(filters.Command("destroy", ignore_case=True))
+async def destroy(message: types.Message) -> None:
+    await message.answer(
+        """
+        Do you really want to destroy your Data??
+        You will need to re-register!
+        """
+    )
 
-    await message.answer(f"{filters.IS_ADMIN=}")
+# Get list of available News Sources.
+@command_router.message(filters.Command("sources", ignore_case=True))
+async def news_sources(message: types.Message) -> None:
+    await message.answer("This will show available news sources for custom inputs.")
+
+# Options to support this project.
+@command_router.message(filters.Command("support", ignore_case=True))
+async def support(message: types.Message) -> None:
+    await message.answer("This will show Project links to like and support")
+
+# Get the User's saved details.
+@command_router.message(filters.Command("mydetails", ignore_case=True))
+async def mydetails(message: types.Message) -> None:
+    await message.answer("If user is registered, it will show it's details.")
+
+# Invoke Registration Process | Or Register the User
+@command_router.message(filters.Command("register", ignore_case=True))
+async def register(message: types.Message) -> None:
+    await message.answer("This registers/re-registers the user.")
