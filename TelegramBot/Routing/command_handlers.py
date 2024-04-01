@@ -7,7 +7,7 @@ using `command_router` from `routers.py`.
 
 from multiprocessing.connection import answer_challenge
 from aiogram import filters, types, F
-from aiogram.utils import markdown
+from .Constant import text_messages as msg
 
 from .routers import command_router
 
@@ -15,13 +15,15 @@ from .routers import command_router
 # Start/Restart the Conversation
 @command_router.message(filters.Command("start", "restart", ignore_case=True))
 async def start(message: types.Message) -> None:
-    await message.answer(f"Hy, {markdown.bold(message.from_user.first_name)}\nNice to see you \n {{BOT Description}}")  # type: ignore
+    await message.answer(
+        msg.welcome_message(username=message.from_user.first_name),  # type: ignore
+    )
 
 
 # Help command : shows list of commands
 @command_router.message(filters.Command("help", ignore_case=True))
 async def help_(message: types.Message) -> None:
-    await message.answer("This command will show you help. (list of commands)")
+    await message.answer(msg.help_message())
 
 
 # Destroys User Data if registered.
@@ -34,20 +36,24 @@ async def destroy(message: types.Message) -> None:
         """
     )
 
+
 # Get list of available News Sources.
 @command_router.message(filters.Command("sources", ignore_case=True))
 async def news_sources(message: types.Message) -> None:
     await message.answer("This will show available news sources for custom inputs.")
+
 
 # Options to support this project.
 @command_router.message(filters.Command("support", ignore_case=True))
 async def support(message: types.Message) -> None:
     await message.answer("This will show Project links to like and support")
 
+
 # Get the User's saved details.
 @command_router.message(filters.Command("mydetails", ignore_case=True))
 async def mydetails(message: types.Message) -> None:
     await message.answer("If user is registered, it will show it's details.")
+
 
 # Invoke Registration Process | Or Register the User
 @command_router.message(filters.Command("register", ignore_case=True))
