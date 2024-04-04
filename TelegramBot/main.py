@@ -12,13 +12,14 @@ from aiogram import Dispatcher, types
 
 from bot_instance import BOT
 from Routing import register_routers
+from storage import storage
 
 # Main Bot Logger
 logger = logging.getLogger("Main_BOT_Logger")
 
 
 # Dispather Object - Root Router
-DP = Dispatcher()
+DP = Dispatcher(storage=storage)
 register_routers(DP)  # Registering required Routers
 
 
