@@ -36,3 +36,15 @@ def help_message() -> str:
 
     7. /register - Invoke Registration Process.
     """
+
+
+def details_message(data: dict) -> str:
+    return f"""
+        *Hey {data.get('username')}!*
+
+        ### You're interested topics are:
+                {data.get('topics')}
+        
+        ### You're from : 
+                {data.get('country')}
+        """

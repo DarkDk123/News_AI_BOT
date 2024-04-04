@@ -6,6 +6,7 @@ using `command_router` from `routers.py`.
 """
 
 from aiogram import filters, types, Bot, F
+from aiogram.fsm.context import FSMContext
 
 from .Constant import text_messages as msg  # Constant message texts
 from .Constant import custom_markups as cm  # Custom Markups
@@ -29,13 +30,33 @@ async def help_(message: types.Message) -> None:
 
 # Destroys User Data if registered.
 @command_router.message(filters.Command("destroy", ignore_case=True))
-async def destroy(message: types.Message) -> None:
-    await message.answer(
-        """
-        Do you really want to destroy your Data??
-        You will need to re-register!
-        """
-    )
+async def destroy(message: types.Message, state: FSMContext) -> None:
+    if not (await state.get_data()).get("is_registered"):
+        await message.answer("You are not registered yet!!")
+
+    else:
+        await message.answer(
+            """
+            Do you really want to destroy your Data??
+            You will need to re-register!
+            """,
+            reply_markup=cm.destroy_data_or_not,
+        )
+
+
+# destroy_data callback
+@command_router.callback_query(F.data == "destroy_yes")
+async def destroy_yes(state: FSMContext) -> None:
+    data = await state.get_data()
+    print("Deleted: ", data)
+
+    await state.clear()
+
+
+# destroy_no (cancel) callback
+@command_router.callback_query(F.data == "destroy_no")
+async def destroy_no(message: types.Message, state: FSMContext) -> None:
+    print("Deleted", state.get_data())
 
 
 # Get list of available News Sources.
@@ -52,9 +73,18 @@ async def support(message: types.Message) -> None:
 
 # Get the User's saved details.
 @command_router.message(filters.Command("mydetails", ignore_case=True))
-async def mydetails(message: types.Message) -> None:
-    await message.answer("If user is registered, it will show it's details.")
-
+async def mydetails(message: types.Message, state: FSMContext) -> None:
+    try:
+        if not (await state.get_data()).get("is_registered"):
+            
+            if not (await state.get_data()).get("is_registered"):
+                await message.answer("You are not registered yet!!")
+            else:
+                await message.answer(
+                    msg.details_message(await state.get_data())
+                )
+    except Exception as e:
+        print(e)
 
 # Invoke Registration Process | Or Register the User
 @command_router.message(filters.Command("register", ignore_case=True))
@@ -63,6 +93,7 @@ async def register(message: types.Message | types.CallbackQuery, bot: Bot) -> No
     chat_id = message.chat.id if isinstance(message, types.Message) else message.message.chat.id  # type: ignore
 
     await bot.send_message(text="It'll start Registration Process", chat_id=chat_id)
+
 
 # Callback to "Menu Options" (Guest)
 @command_router.callback_query(F.data == "guest_callback")
