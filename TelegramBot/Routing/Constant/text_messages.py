@@ -48,3 +48,32 @@ def details_message(data: dict) -> str:
         ### You're from : 
                 {data.get('country')}
         """
+
+
+def reg_init(username:str) -> str:
+    return f"""
+        ##Registration Process Started!! 🌟
+        
+        👋 Hey, {username}!
+        Is this correct name for you??
+        """
+
+def locations() -> str:
+    return """
+        *Please select your country!!*
+        """
+
+def sources(scr:list) -> str:
+    result = "This are some of the Available Sources: \n"
+    for s in scr:
+        result += s + "\n"
+    
+    return result
+
+
+def support() -> str:
+    return """
+    Please Support me At:
+
+    @Github - https://github.com/DarkDk123/News_AI_BOT 💝
+    """

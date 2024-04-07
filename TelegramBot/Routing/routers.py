@@ -9,6 +9,9 @@ from aiogram import Dispatcher, Router
 # Router to Route all the Commands
 command_router = Router(name="Command Router")
 
+# Router for Registration Handlers
+registration_router = Router(name="Registration Router")
+
 
 def register_routers(DP: Dispatcher) -> None:
     """Registers all the Routers to the Dispatcher Object
@@ -20,4 +23,4 @@ def register_routers(DP: Dispatcher) -> None:
       None
     """
 
-    DP.include_routers(command_router)
+    DP.include_routers(command_router, registration_router)
