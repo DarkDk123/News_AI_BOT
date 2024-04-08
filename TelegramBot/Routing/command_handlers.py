@@ -12,6 +12,8 @@ from .Constant import text_messages as msg  # Constant message texts
 from .Constant import custom_markups as cm  # Custom Markups
 from .routers import command_router
 
+import sys
+sys.path.append("../")
 from NewsFetchClasses.Fetch_news import newsAPI
 
 
@@ -48,9 +50,9 @@ async def destroy(message: types.Message, state: FSMContext) -> None:
 
 # destroy_data callback
 @command_router.callback_query(F.data == "destroy_yes")
-async def destroy_yes(state: FSMContext) -> None:
+async def destroy_yes(callback: types.CallbackQuery, state: FSMContext) -> None:
     data = await state.get_data()
-    print("🚮 Deleted: ", data)
+    await callback.message.answer(f"🚮 Deleted: {data.get('name')} from {data.get('country')} 🙋‍♂️", ) # type: ignore
 
     await state.clear()
 
@@ -65,17 +67,25 @@ async def destroy_no(message: types.Message, state: FSMContext) -> None:
 @command_router.message(filters.Command("sources", ignore_case=True))
 async def news_sources(message: types.Message, state:FSMContext) -> None:
     if (data:=await state.get_data()):
-        data = {'country':data['country']}
-    response = newsAPI.get_sources(language='en', **data)
+        response = newsAPI.get_sources(
+            language="en",
+            country=msg.countries.get(data.get("country"), "in"),  # type: ignore
+        )
+        response2 = newsAPI.get_sources(language="en")
 
     if (response.get('status')=='ok'):
-        await message.answer(msg.sources([source['name'] for source in response['sources']]))
+        sources = [source["name"] for source in response["sources"]+ (response2["sources"] if response2["status"]=='ok' else [])][:10]
+
+        await message.answer(msg.sources(sources))
 
 
 # Options to support this project.
 @command_router.message(filters.Command("support", ignore_case=True))
 async def support(message: types.Message) -> None:
-    await message.answer(msg.support())
+    await message.answer(
+        text=msg.support(),
+        reply_markup=cm.support
+    )
 
 
 # Get the User's saved details.
@@ -92,22 +102,29 @@ async def mydetails(message: types.Message, state: FSMContext) -> None:
 
 # Invoke Registration Process | Or Register the User
 @command_router.message(filters.Command("register", ignore_case=True))
-async def register(message: types.Message, bot: Bot, state: FSMContext) -> None:
-    await message.answer(
-        text=msg.reg_init((message.from_user.full_name)),  # type: ignore
-        reply_markup=cm.registration_markups["correct_name_or_not"],
-    )
-
-
 @command_router.callback_query(F.data == "register_callback")
-async def register_callback(callback: types.CallbackQuery,bot: Bot, state: FSMContext) -> None:
-    message = callback.message
+async def register_callback(message: types.Message | types.CallbackQuery, state: FSMContext) -> None:
+    full_name = message.from_user.full_name # type: ignore
+    message = message if isinstance(message, types.Message) else message.message # type: ignore
+    
+    if ((await state.get_data()).get('is_registered')):
+        await message.answer("You are already registered")
+        await mydetails(message, state)
+        await message.answer(
+            text="Want to re-register?",
+            reply_markup=cm.registration_markups.get("re-register")
+        )
+    else:
+        await message.answer(
+            text=msg.reg_init(full_name),  # type: ignore
+            reply_markup=cm.registration_markups["correct_name_or_not"],
+        )
 
-    await message.answer( # type: ignore
-        text=msg.reg_init((callback.from_user.full_name)), 
-        reply_markup=cm.registration_markups["correct_name_or_not"]
-    )
 
+@command_router.callback_query(F.data == "re-register_callback")
+async def re_register_callback(callback:types.CallbackQuery, state:FSMContext) -> None:
+    await state.clear()
+    await register_callback(callback, state)
 
 # Callback to "Menu Options" (Guest)
 @command_router.callback_query(F.data == "guest_callback")

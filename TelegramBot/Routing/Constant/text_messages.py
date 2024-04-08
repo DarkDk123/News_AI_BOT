@@ -40,7 +40,7 @@ def help_message() -> str:
 
 def details_message(data: dict) -> str:
     return f"""
-        *Hey {data.get('username')}!*
+        *Hey {data.get('name')}!*
 
         ### You're interested topics are:
                 {data.get('topics')}
@@ -50,7 +50,7 @@ def details_message(data: dict) -> str:
         """
 
 
-def reg_init(username:str) -> str:
+def reg_init(username: str) -> str:
     return f"""
         ##Registration Process Started!! 🌟
         
@@ -58,22 +58,81 @@ def reg_init(username:str) -> str:
         Is this correct name for you??
         """
 
+
 def locations() -> str:
     return """
         *Please select your country!!*
         """
 
-def sources(scr:list) -> str:
+
+def sources(scr: list) -> str:
     result = "This are some of the Available Sources: \n"
-    for s in scr:
-        result += s + "\n"
-    
+    for i, s in enumerate(scr, 1):
+        result += f"{i}. {s} \n"
+
     return result
 
 
 def support() -> str:
     return """
-    Please Support me At:
-
-    @Github - https://github.com/DarkDk123/News_AI_BOT 💝
+    Please Support me At following: 💝
     """
+
+
+## Countries data dictionary
+countries = {
+    "United Arab Emirates": "ae",
+    "Argentina": "ar",
+    "Austria": "at",
+    "Australia": "au",
+    "Belgium": "be",
+    "Bulgaria": "bg",
+    "Brazil": "br",
+    "Canada": "ca",
+    "Switzerland": "ch",
+    "China": "cn",
+    "Colombia": "co",
+    "Cuba": "cu",
+    "Czech Republic": "cz",
+    "Germany": "de",
+    "Egypt": "eg",
+    "France": "fr",
+    "United Kingdom": "gb",
+    "Greece": "gr",
+    "Hong Kong": "hk",
+    "Hungary": "hu",
+    "Indonesia": "id",
+    "Ireland": "ie",
+    "Israel": "il",
+    "India": "in",
+    "Italy": "it",
+    "Japan": "jp",
+    "South Korea": "kr",
+    "Lithuania": "lt",
+    "Latvia": "lv",
+    "Morocco": "ma",
+    "Mexico": "mx",
+    "Malaysia": "my",
+    "Nigeria": "ng",
+    "Netherlands": "nl",
+    "Norway": "no",
+    "New Zealand": "nz",
+    "Philippines": "ph",
+    "Poland": "pl",
+    "Portugal": "pt",
+    "Romania": "ro",
+    "Serbia": "rs",
+    "Russia": "ru",
+    "Saudi Arabia": "sa",
+    "Sweden": "se",
+    "Singapore": "sg",
+    "Slovenia": "si",
+    "Slovakia": "sk",
+    "Thailand": "th",
+    "Turkey": "tr",
+    "Taiwan": "tw",
+    "Ukraine": "ua",
+    "United States": "us",
+    "Venezuela": "ve",
+    "South Africa": "za",
+}

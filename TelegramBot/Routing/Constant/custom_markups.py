@@ -5,6 +5,7 @@ Custom Keyboard and other markups are declared here!
 """
 
 from aiogram import types
+from config import settings
 
 # Register or continue as guest
 register_or_guest = types.InlineKeyboardMarkup(
@@ -37,8 +38,17 @@ destroy_data_or_not = types.InlineKeyboardMarkup(
     ]
 )
 
+# Support markup
+support = types.InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            types.InlineKeyboardButton(text="➡️ LinkedIn", url=settings.LINKEDIN_URL),
+            types.InlineKeyboardButton(text="🚀 GitHub", url=settings.GITHUB_URL),
+        ]
+    ]
+)
 
-# Registration Process | Correct name or not
+# Registration Process
 
 registration_markups = {
     "correct_name_or_not": types.InlineKeyboardMarkup(
@@ -62,7 +72,21 @@ registration_markups = {
             ],
         ],
         one_time_keyboard=True,
-        resize_keyboard=True,
-        input_field_placeholder="Select One of following Countries",
+    ),
+    "re-register": types.InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                types.InlineKeyboardButton(
+                    text="Re-register", callback_data="re-register_callback"
+                ),
+                types.InlineKeyboardButton(
+                    text="NO, Leave", callback_data="destroy_no"
+                ),
+            ]
+        ]
     ),
 }
+
+# Independent Objects!
+
+remove_keyboard = types.ReplyKeyboardRemove()
