@@ -66,17 +66,17 @@ async def destroy_no(message: types.Message, state: FSMContext) -> None:
 # Get list of available News Sources.
 @command_router.message(filters.Command("sources", ignore_case=True))
 async def news_sources(message: types.Message, state:FSMContext) -> None:
-    if (data:=await state.get_data()):
-        response = newsAPI.get_sources(
-            language="en",
-            country=msg.countries.get(data.get("country"), "in"),  # type: ignore
-        )
-        response2 = newsAPI.get_sources(language="en")
+    data = await state.get_data()
+    response = newsAPI.get_sources(
+        language="en",
+        country=msg.countries.get(data.get("country"), "in"),  # type: ignore
+    )
+    
+    response2 = newsAPI.get_sources(language="en")
 
-    if (response.get('status')=='ok'):
-        sources = [source["name"] for source in response["sources"]+ (response2["sources"] if response2["status"]=='ok' else [])][:10]
-
-        await message.answer(msg.sources(sources))
+    sources = [source["name"] for source in response.get('sources', []) + response2.get('sources', [])][:10]
+    
+    await message.answer(msg.sources(sources))
 
 
 # Options to support this project.

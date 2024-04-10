@@ -63,15 +63,16 @@ registration_markups = {
     ),
     "location_prompt": types.ReplyKeyboardMarkup(
         keyboard=[
-            [types.KeyboardButton(text="India"), types.KeyboardButton(text="Pakistan")],
+            [types.KeyboardButton(text="India"), types.KeyboardButton(text="Japan")],
             [
-                types.KeyboardButton(text="USA"),
+                types.KeyboardButton(text="United States"),
                 types.KeyboardButton(
                     text="Use Current Location", request_location=True
                 ),
             ],
         ],
         one_time_keyboard=True,
+        input_field_placeholder="You can also Enter here!"
     ),
     "re-register": types.InlineKeyboardMarkup(
         inline_keyboard=[
