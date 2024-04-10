@@ -8,7 +8,7 @@ It's the Entry point of the "Telegram BOT"
 import asyncio, logging
 import sys
 
-from aiogram import Dispatcher, types, Bot
+from aiogram import Dispatcher
 
 from bot_instance import BOT, menu_buttons
 from Routing import register_routers
