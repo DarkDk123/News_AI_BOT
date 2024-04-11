@@ -17,8 +17,10 @@ class Registration(StatesGroup):
     loc_not_passed = State(state="Location prompt not passed")
     sel_countries_manually = State(state="Select countries")
 
-    sel_news_topics = State(state="Select News Topics")
+    sel_news_topics = State(state="Select News Topics")  # Not used now!
 
 
 class MainMenu(StatesGroup):
-    pass
+    sel_custom_news_topics = State(state="Select News Topics")
+    sel_country_manually = State(state="Select Country")
+    get_custom_prompt = State(state="NLP Prompt")

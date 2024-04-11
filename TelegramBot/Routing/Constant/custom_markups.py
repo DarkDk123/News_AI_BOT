@@ -50,7 +50,7 @@ support = types.InlineKeyboardMarkup(
 
 # Registration Process
 
-registration_markups = {
+registration_markups: dict = {
     "correct_name_or_not": types.InlineKeyboardMarkup(
         inline_keyboard=[
             [
@@ -72,7 +72,7 @@ registration_markups = {
             ],
         ],
         one_time_keyboard=True,
-        input_field_placeholder="You can also Enter here!"
+        input_field_placeholder="You can also Enter here!",
     ),
     "re-register": types.InlineKeyboardMarkup(
         inline_keyboard=[
@@ -86,6 +86,31 @@ registration_markups = {
             ]
         ]
     ),
+}
+
+
+# Main Menu Markups
+menu_markups: dict = {
+    "main_menu": types.InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                types.InlineKeyboardButton(
+                    text="_Quick Updates_**", callback_data="show_results"
+                ),
+                types.InlineKeyboardButton(
+                    text="_Select Topics_", callback_data="sel_topics_callback"
+                ),
+            ],
+            [
+                types.InlineKeyboardButton(
+                    text="_Get TOP Headlines_", callback_data="show_results_head"
+                ),
+                types.InlineKeyboardButton(
+                    text="_Custom Prompt_", callback_data="NLP_callback"
+                ),
+            ],
+        ]
+    )
 }
 
 # Independent Objects!

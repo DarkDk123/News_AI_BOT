@@ -125,10 +125,3 @@ async def register_callback(message: types.Message | types.CallbackQuery, state:
 async def re_register_callback(callback:types.CallbackQuery, state:FSMContext) -> None:
     await state.clear()
     await register_callback(callback, state)
-
-# Callback to "Menu Options" (Guest)
-@command_router.callback_query(F.data == "guest_callback")
-async def guest_callback(callback: types.CallbackQuery, bot: Bot) -> None:
-    await bot.send_message(
-        text="This will launch menu options for Guest", chat_id=callback.from_user.id
-    )
