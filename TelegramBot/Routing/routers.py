@@ -12,6 +12,9 @@ command_router = Router(name="Command Router")
 # Router for Registration Handlers
 registration_router = Router(name="Registration Router")
 
+# Router for Main Menu
+menu_router = Router(name="Menu Router")
+
 
 def register_routers(DP: Dispatcher) -> None:
     """Registers all the Routers to the Dispatcher Object
@@ -23,4 +26,4 @@ def register_routers(DP: Dispatcher) -> None:
       None
     """
 
-    DP.include_routers(command_router, registration_router)
+    DP.include_routers(command_router, registration_router, menu_router)
