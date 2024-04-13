@@ -95,22 +95,73 @@ menu_markups: dict = {
         inline_keyboard=[
             [
                 types.InlineKeyboardButton(
-                    text="_Quick Updates_**", callback_data="show_results"
+                    text="Quick Updates", callback_data="show_results"
                 ),
                 types.InlineKeyboardButton(
-                    text="_Select Topics_", callback_data="sel_topics_callback"
+                    text="Select Topics", callback_data="sel_topics_callback"
                 ),
             ],
             [
                 types.InlineKeyboardButton(
-                    text="_Get TOP Headlines_", callback_data="show_results_head"
+                    text="Get TOP Headlines", callback_data="show_results_head"
                 ),
                 types.InlineKeyboardButton(
-                    text="_Custom Prompt_", callback_data="NLP_callback"
+                    text="Custom Prompt", callback_data="NLP_callback"
                 ),
             ],
         ]
-    )
+    ),
+    "sel_topics": types.InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                types.InlineKeyboardButton(text="AI", callback_data="topic:AI"),
+                types.InlineKeyboardButton(text="ML", callback_data="topic:ML"),
+            ],
+            [
+                types.InlineKeyboardButton(text="Tech", callback_data="topic:Tech"),
+                types.InlineKeyboardButton(
+                    text="Politics", callback_data="topic:Politics"
+                ),
+            ],
+            [
+                types.InlineKeyboardButton(
+                    text="Custom", callback_data="sel_custom_news_topics"
+                )
+            ],
+            [
+                types.InlineKeyboardButton(
+                    text="◀️Back", callback_data="guest_callback"
+                ),
+                types.InlineKeyboardButton(
+                    text="Home 🏠", callback_data="guest_callback"
+                ),
+            ],
+        ]
+    ),
+    "sel_country": types.InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                types.InlineKeyboardButton(text="India", callback_data="country:India"),
+                types.InlineKeyboardButton(text="Japan", callback_data="country:Japan"),
+            ],
+            [
+                types.InlineKeyboardButton(
+                    text="United States", callback_data="country:United States"
+                ),
+                types.InlineKeyboardButton(
+                    text="Custom", callback_data="sel_country_man"
+                ),
+            ],
+            [
+                types.InlineKeyboardButton(
+                    text="◀️Back", callback_data="sel_topics_callback"
+                ),
+                types.InlineKeyboardButton(
+                    text="Home 🏠", callback_data="guest_callback"
+                ),
+            ],
+        ]
+    ),
 }
 
 # Independent Objects!

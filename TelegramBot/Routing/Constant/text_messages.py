@@ -78,6 +78,17 @@ def support() -> str:
     Please Support me At following: 💝
     """
 
+def sel_countries():
+    country_list_str = "\n".join(f"{i}. {item}" for i, item in enumerate(countries, start=1))
+    return f"""
+    _Select a country :_ 
+    
+    {country_list_str}
+    """
+
+
+def _get_country(id_:int):
+    return list(countries.keys())[id_] #type: ignore
 
 ## Countries data dictionary
 countries = {
