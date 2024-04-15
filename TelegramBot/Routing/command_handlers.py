@@ -14,7 +14,7 @@ from .routers import command_router
 
 import sys
 
-sys.path.append("../")
+sys.path.append("./")
 from NewsFetchClasses.Fetch_news import newsAPI
 
 
