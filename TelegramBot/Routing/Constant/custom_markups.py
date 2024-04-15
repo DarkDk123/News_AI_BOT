@@ -18,7 +18,7 @@ register_or_guest = types.InlineKeyboardMarkup(
         ],
         [
             types.InlineKeyboardButton(
-                text="Continue as a Guest", callback_data="guest_callback"
+                text="Continue as a Guest", callback_data="menu_callback"
             )
         ],
     ]
@@ -129,11 +129,9 @@ menu_markups: dict = {
                 )
             ],
             [
+                types.InlineKeyboardButton(text="◀️Back", callback_data="menu_callback"),
                 types.InlineKeyboardButton(
-                    text="◀️Back", callback_data="guest_callback"
-                ),
-                types.InlineKeyboardButton(
-                    text="Home 🏠", callback_data="guest_callback"
+                    text="Home 🏠", callback_data="menu_callback"
                 ),
             ],
         ]
@@ -157,7 +155,7 @@ menu_markups: dict = {
                     text="◀️Back", callback_data="sel_topics_callback"
                 ),
                 types.InlineKeyboardButton(
-                    text="Home 🏠", callback_data="guest_callback"
+                    text="Home 🏠", callback_data="menu_callback"
                 ),
             ],
         ]

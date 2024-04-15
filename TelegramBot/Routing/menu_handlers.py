@@ -17,7 +17,7 @@ from .Constant import custom_markups as cm
 from config.settings import ADMIN_USER
 
 
-@menu_router.callback_query(F.data == "guest_callback")
+@menu_router.callback_query(F.data == "menu_callback")
 async def start_menu(callback: types.CallbackQuery, bot: Bot) -> None:
     message = callback.message
 
