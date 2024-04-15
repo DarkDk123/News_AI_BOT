@@ -69,7 +69,9 @@ async def select_news_topics(
         data = await state.get_data()
         # Get message to edit
         main_message = await bot.edit_message_text(
-            "Just Wait🌚", message_id=data.get("main_message_id"), chat_id=message.chat.id
+            "Just Wait🌚",
+            message_id=data.get("main_message_id"),
+            chat_id=message.chat.id,
         )
         topics = list(map(lambda x: x.casefold().strip(), message.text.split(",")))  # type: ignore
         if not topics:
@@ -133,7 +135,7 @@ async def country_callback(callback: types.CallbackQuery, state: FSMContext) -> 
         tempDict = (await state.get_data()).get("tempDict", {})
         tempDict.update(country=country)
 
-        await state.update_data(tempDict=tempDict) # Update in Redis database
+        await state.update_data(tempDict=tempDict)  # Update in Redis database
 
         callback = types.CallbackQuery(
             id="done",
@@ -166,9 +168,7 @@ async def sel_custom_country_callback(
 
 
 @menu_router.message(MainMenu.sel_country_manually)
-async def select_country(
-    message: types.Message, state: FSMContext, bot: Bot
-) -> None:
+async def select_country(message: types.Message, state: FSMContext, bot: Bot) -> None:
     try:
         data = await state.get_data()
         # Get message to edit
@@ -177,12 +177,12 @@ async def select_country(
             message_id=data.get("main_message_id"),
             chat_id=message.chat.id,
         )
-        country_id = int(message.text) if message.text.isnumeric() else None # type: ignore
+        country_id = int(message.text) if message.text.isnumeric() else None  # type: ignore
         # TODO: Please filter valid countries and get total number of countries! Find 1 to x?
         if (not country_id) or 0 > country_id or country_id > 10:
             try:
                 await main_message.edit_text(  # type: ignore
-                text="*Please, Enter valid Choice*\n" + msg.sel_countries()
+                    text="*Please, Enter valid Choice*\n" + msg.sel_countries()
                 )
             except Exception as e:
                 await message.answer(str(e))
@@ -191,7 +191,7 @@ async def select_country(
             tempDict: dict = data.get("tempDict", {})
             tempDict.update(country=msg._get_country(country_id))
             await state.update_data(tempDict=tempDict)
-            
+
             callback = types.CallbackQuery(
                 id="done",
                 from_user=message.from_user,  # type: ignore
@@ -213,3 +213,18 @@ async def select_country(
         await message.delete()
 
 
+@menu_router.callback_query(F.data == "show_results_head")
+async def show_results_head(callback: types.CallbackQuery) -> None:
+    messaage = callback.message
+
+    if isinstance(messaage, types.Message):
+        await messaage.answer(text="Showing Headlines")
+
+
+@menu_router.callback_query(F.data == "NLP_callback")
+async def nlp_callback(callback: types.CallbackQuery, state: FSMContext) -> None:
+    message = callback.message
+
+    await state.set_state(MainMenu.get_custom_prompt)
+    if isinstance(message, types.Message):
+        await message.answer(text="Please Enter prompt, like ''")
