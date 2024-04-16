@@ -62,8 +62,8 @@ async def destroy_yes(callback: types.CallbackQuery, state: FSMContext) -> None:
 
 # destroy_no (cancel) callback
 @command_router.callback_query(F.data == "destroy_no")
-async def destroy_no(message: types.Message, state: FSMContext) -> None:
-    await message.answer("🫂 You Are Safe!!")
+async def destroy_no(callback: types.CallbackQuery, state: FSMContext) -> None:
+    await callback.message.answer("🫂 You Are Safe!!")  # type: ignore
 
 
 # Get list of available News Sources.
@@ -132,3 +132,21 @@ async def re_register_callback(
 ) -> None:
     await state.clear()
     await register_callback(callback, state)
+
+
+@command_router.message(filters.Command("clear"))
+async def clear_chat(message: types.Message, bot: Bot):
+    print(message.message_id)
+    message = await message.reply("Going to clear chat in 5 seconds...")
+    print(message.message_id)
+    for t in range(4, 0, -1):
+        from time import sleep
+
+        sleep(0.8)
+        await message.edit_text(f"clearing in {t} seconds...")
+        
+    for id in range(message.message_id, 0, -1):
+        try:
+            await bot.delete_message(chat_id=message.chat.id, message_id=id)
+        except:
+            pass
