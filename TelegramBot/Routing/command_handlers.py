@@ -135,10 +135,11 @@ async def re_register_callback(
 
 
 @command_router.message(filters.Command("clear"))
-async def clear_chat(message: types.Message, bot: Bot):
+async def clear_chat(message: types.Message, bot: Bot, state: FSMContext):
 
     message = await message.reply("Going to clear chat in 5 seconds...")
-    
+
+    await state.set_state(None)
     for t in range(4, 0, -1):
         from time import sleep
 
