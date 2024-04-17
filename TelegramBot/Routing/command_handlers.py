@@ -136,9 +136,9 @@ async def re_register_callback(
 
 @command_router.message(filters.Command("clear"))
 async def clear_chat(message: types.Message, bot: Bot):
-    print(message.message_id)
+
     message = await message.reply("Going to clear chat in 5 seconds...")
-    print(message.message_id)
+    
     for t in range(4, 0, -1):
         from time import sleep
 
