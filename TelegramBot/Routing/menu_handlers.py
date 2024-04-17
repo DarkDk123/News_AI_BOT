@@ -16,6 +16,8 @@ from .Constant import text_messages as msg
 from .Constant import custom_markups as cm
 from config.settings import ADMIN_USER
 
+import time as t
+
 
 @menu_router.callback_query(F.data == "menu_callback")
 async def start_menu(callback: types.CallbackQuery, bot: Bot) -> None:
@@ -178,7 +180,7 @@ async def select_country(message: types.Message, state: FSMContext, bot: Bot) ->
             chat_id=message.chat.id,
         )
         country_id = int(message.text) if message.text.isnumeric() else None  # type: ignore
-        
+
         if (not country_id) or 1 > country_id or country_id > 17:
             try:
                 await main_message.edit_text(  # type: ignore
@@ -275,9 +277,26 @@ async def nlp_custom_prompt(
         await state.set_state(None)
         await message.delete()
         # await show_news(callback, state)
-        await main_message.edit_text(text="Showing news...") # type: ignore
+        await main_message.edit_text(text="Showing news...")  # type: ignore
     else:
         await message.answer(text="Provide a valid prompt!!")
+
+
+@menu_router.message()
+async def handle_rubbish(message: types.Message, bot: Bot) -> None:
+    if message.text:
+        print(message.text)
+        b_message = await message.answer("❌ Invalid Message or Command!! 😵")
+    elif message.photo:
+        b_message = await message.answer("👌Beautiful Photo!!, but of no use!😁")
+    elif message.audio or message.voice:
+        b_message = await message.answer("😅 I'm Deaf,🧏 Just listen👂 news from me!")  # type: ignore
+    else:
+        b_message = await message.answer("❌ It's Invalid, please try valid command!🙏")
+    t.sleep(1.5)  # Wait & delete!
+
+    await message.delete()
+    await b_message.delete()
 
 
 def _extract_features(prompt: str):
