@@ -178,8 +178,8 @@ async def select_country(message: types.Message, state: FSMContext, bot: Bot) ->
             chat_id=message.chat.id,
         )
         country_id = int(message.text) if message.text.isnumeric() else None  # type: ignore
-        # TODO: Please filter valid countries and get total number of countries! Find 1 to x?
-        if (not country_id) or 0 > country_id or country_id > 10:
+        
+        if (not country_id) or 1 > country_id or country_id > 17:
             try:
                 await main_message.edit_text(  # type: ignore
                     text="*Please, Enter valid Choice*\n" + msg.sel_countries()
