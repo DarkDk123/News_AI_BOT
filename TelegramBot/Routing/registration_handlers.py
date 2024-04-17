@@ -14,6 +14,8 @@ from .Constant import custom_markups as cm
 from .routers import registration_router as rr
 from .fsm import Registration
 
+from config.settings import ADMIN_USER
+
 
 @rr.callback_query(F.data == "correct_name_yes")
 async def correct_name(callback: types.CallbackQuery, state: FSMContext) -> None:
@@ -40,13 +42,74 @@ async def name(message: types.Message, state: FSMContext) -> None:
 
 
 @rr.message(Registration.location_prompt)
-async def location_prompt(message: types.Message, state: FSMContext) -> None:
-    await state.update_data(country=message.text.title())  # type: ignore
-    await message.reply(
-        text="Now, Please Enter your favourite topics Separated by *coma (,)*",
-        reply_markup=cm.remove_keyboard,
+@rr.callback_query(F.data.startswith("r_country:"))
+async def country_callback(callback: types.CallbackQuery, state: FSMContext) -> None:
+    message = callback.message
+
+    if isinstance(message, types.Message):
+        country = callback.data.removeprefix("r_country:")  # type: ignore
+        await state.update_data(country=country.title())
+
+        await message.reply(
+            text="Now, Please Enter your favourite topics Separated by *coma (,)*",
+            reply_markup=cm.remove_keyboard,
+        )
+
+        await state.set_state(Registration.sel_news_topics)
+
+
+@rr.message(Registration.location_prompt)
+@rr.callback_query(F.data == "r_country_man")
+async def r_country_man(callback: types.CallbackQuery, state: FSMContext) -> None:
+    await state.set_state(Registration.sel_countries_manually)
+
+    editable_message = await callback.message.answer(  # type: ignore
+        text=msg.sel_countries()
     )
-    await state.set_state(Registration.sel_news_topics)
+
+    await callback.message.delete()  # type: ignore
+    await state.update_data(
+        # For navigation main_message should be edited only
+        main_message_id=editable_message.message_id
+    )
+
+
+@rr.message(Registration.sel_countries_manually)
+async def select_country(message: types.Message, state: FSMContext, bot: Bot) -> None:
+    try:
+        data = await state.get_data()
+        # Get message to edit
+        main_message = await bot.edit_message_text(
+            "Just Wait🌚",
+            message_id=data.get("main_message_id"),
+            chat_id=message.chat.id,
+        )
+        country_id = int(message.text) if message.text.isnumeric() else None  # type: ignore
+        # TODO: Please filter valid countries and get total number of countries! Find 1 to x?
+        if (not country_id) or 0 > country_id or country_id > 10:
+            try:
+                await main_message.edit_text(  # type: ignore
+                    text="*Please, Enter valid Choice*\n" + msg.sel_countries()
+                )
+            except Exception as e:
+                await message.answer(str(e))
+
+        else:
+            await state.update_data(country=msg._get_country(country_id))
+
+            await message.answer(
+                text="Now, Please Enter your favourite topics Separated by *coma (,)*",
+            )
+
+            await state.set_state(Registration.sel_news_topics)
+
+    except Exception as e:
+        await message.answer(
+            f"Something Went Wrong!!\nContact admin ({ADMIN_USER}) with Screenshot"
+        )
+
+    else:
+        await message.delete()
 
 
 @rr.message(Registration.sel_news_topics)

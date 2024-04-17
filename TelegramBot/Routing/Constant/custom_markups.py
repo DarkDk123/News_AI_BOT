@@ -61,14 +61,21 @@ registration_markups: dict = {
             ]
         ]
     ),
-    "location_prompt": types.ReplyKeyboardMarkup(
-        keyboard=[
-            [types.KeyboardButton(text="India"), types.KeyboardButton(text="Japan")],
+    "location_prompt": types.InlineKeyboardMarkup(
+        inline_keyboard=[
             [
-                types.KeyboardButton(text="United States"),
-                types.KeyboardButton(
-                    text="Use Current Location", request_location=True
+                types.InlineKeyboardButton(
+                    text="India", callback_data="r_country:India"
                 ),
+                types.InlineKeyboardButton(
+                    text="Japan", callback_data="r_country:Japan"
+                ),
+            ],
+            [
+                types.InlineKeyboardButton(
+                    text="United States", callback_data="r_country:United States"
+                ),
+                types.InlineKeyboardButton(text="custom", callback_data="r_country_man"),
             ],
         ],
         one_time_keyboard=True,
