@@ -215,16 +215,75 @@ async def select_country(message: types.Message, state: FSMContext, bot: Bot) ->
 
 @menu_router.callback_query(F.data == "show_results_head")
 async def show_results_head(callback: types.CallbackQuery) -> None:
-    messaage = callback.message
+    message = callback.message
 
-    if isinstance(messaage, types.Message):
-        await messaage.answer(text="Showing Headlines")
+    if isinstance(message, types.Message):
+        callback = types.CallbackQuery(
+            id="done",
+            from_user=message.from_user,  # type: ignore
+            chat_instance=message.chat.type,
+            message=message,  # type: ignore
+            data="sel_country_callback",
+        )
+
+        # await show_news(callback, state)
+        await message.answer(text="Showing Headlines")
 
 
 @menu_router.callback_query(F.data == "NLP_callback")
-async def nlp_callback(callback: types.CallbackQuery, state: FSMContext) -> None:
+async def nlp_callback(
+    callback: types.CallbackQuery, state: FSMContext, bot: Bot
+) -> None:
     message = callback.message
 
     await state.set_state(MainMenu.get_custom_prompt)
     if isinstance(message, types.Message):
-        await message.answer(text="Please Enter prompt, like ''")
+        # Get message to edit
+        await message.edit_text(text="Just Wait🌚")
+
+        await state.update_data(main_message=message.message_id)
+
+        await message.edit_text(text="Please Enter prompt : ")  # type:ignore
+
+
+@menu_router.message(MainMenu.get_custom_prompt)
+async def nlp_custom_prompt(
+    message: types.Message, state: FSMContext, bot: Bot
+) -> None:
+    if message.text:
+        data = await state.get_data()
+        tempDict: dict = data.get("tempDict", {})
+
+        # Method to extract topics, country and source from given prompt
+        topics, country, source = _extract_features(message.text).values()
+        tempDict.update(topics=topics, country=country, source=source)
+        await state.update_data(tempDict=tempDict)
+
+        main_message = await bot.edit_message_text(
+            text="Just Wait🌚",
+            chat_id=message.chat.id,
+            message_id=(await state.get_data()).get("main_message", message.message_id),
+        )
+
+        callback = types.CallbackQuery(
+            id="done",
+            from_user=message.from_user,  # type: ignore
+            chat_instance=message.chat.type,
+            message=main_message,  # type: ignore
+            data="sel_country_callback",
+        )
+        await state.set_state(None)
+        await message.delete()
+        # await show_news(callback, state)
+        await main_message.edit_text(text="Showing news...") # type: ignore
+    else:
+        await message.answer(text="Provide a valid prompt!!")
+
+
+def _extract_features(prompt: str):
+    topics = []
+    country = ""
+    source = ""
+    # Logic for extracting features from prompt
+
+    return {"topics": topics, "country": country, "source": source}
