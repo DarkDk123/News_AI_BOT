@@ -18,6 +18,7 @@ from config.settings import ADMIN_USER
 
 import time as t
 from NewsFetchClasses.Fetch_news import newsAPI, get_sources_by_country
+from newsapi.newsapi_exception import NewsAPIException
 
 
 @menu_router.callback_query(F.data == "menu_callback")
@@ -38,7 +39,7 @@ async def start_menu(callback: types.CallbackQuery, bot: Bot) -> None:
 
 @menu_router.callback_query(F.data == "quick_updates")
 async def quick_update(callback: types.CallbackQuery, state: FSMContext) -> None:
-    message =callback.message
+    message = callback.message
     data = await state.get_data()
 
     if isinstance(message, types.Message):
@@ -54,9 +55,8 @@ async def quick_update(callback: types.CallbackQuery, state: FSMContext) -> None
                 message=message,  # type: ignore
                 data="show_personalized_news",
             )
-            
+
             await show_news(callback, state)
-        
 
 
 @menu_router.callback_query(F.data == "sel_topics_callback")
@@ -306,57 +306,73 @@ async def nlp_custom_prompt(
 async def show_news(callback: types.CallbackQuery, state: FSMContext) -> None:
     message = callback.message
     data = await state.get_data()
-    
+
     # Logic for Personalized Vs Temporary News
-    tempDict =  data if (F.data == "show_personalized_news") else data.get("tempDict", {})
-
-    sources = newsAPI.get_sources(
-        country=msg.countries.get(tempDict.get("country", "India"))
-    )  # getting sources available in country!
-
-    topics = "|".join(tempDict.get("topics", ["tech", "python"]))
-    sources = get_sources_by_country(
-        msg.countries.get(tempDict.get("country", "India"), "in")
-    )
-    response = newsAPI.get_everything(
-        q=topics, sources=sources, sort_by="relevancy", page_size=3
+    tempDict = (
+        data if (F.data == "show_personalized_news") else data.get("tempDict", {})
     )
 
-    if isinstance(message, types.Message):
-        if response["status"] == "ok":
-            for article in response["articles"]:
-                if article["title"] in ("[Removed]", None):
-                    continue
-                await message.answer(msg.article_to_str(article=article))
+    try:
+        topics = "|".join(tempDict.get("topics", ["tech", "python"]))
+        sources = get_sources_by_country(
+            msg.countries.get(tempDict.get("country", "India"), "in")
+        )
+        response = newsAPI.get_everything(
+            q=topics, sources=sources, sort_by="relevancy", page_size=3
+        )
 
-            if not response["articles"]:
-                await message.edit_text("📪No Articles Found!⚠️")
-        elif response["status"] == "error":
-            await message.edit_text(response["message"])
-
+    except NewsAPIException as e:
+        if e.get_code() == "rateLimited":
+            await message.answer(msg.api_rate_limited())  # type: ignore
         else:
-            await message.edit_text(str(response))
+            await message.answer("🙁 Unknown API Error!!⚠️")  # type: ignore
+
+    else:
+
+        if isinstance(message, types.Message):
+            if response["status"] == "ok":
+                for article in response["articles"]:
+                    if article["title"] in ("[Removed]", None):
+                        continue
+                    await message.answer(msg.article_to_str(article=article))
+
+                if not response["articles"]:
+                    await message.edit_text("📪No Articles Found!⚠️")
+            elif response["status"] == "error":
+                await message.edit_text(response["message"])
+
+            else:
+                await message.edit_text(str(response))
 
 
 @menu_router.callback_query(F.data == "show_news_headlines")
 async def show_news_headlines(callback: types.CallbackQuery, state) -> None:
     message = callback.message
-    response = newsAPI.get_top_headlines(page_size=3)
 
-    if isinstance(message, types.Message):
-        if response["status"] == "ok":
-            for article in response["articles"]:
-                if article["title"] in ("[Removed]", None):
-                    continue
-                await message.answer(msg.article_to_str(article=article))
+    try:
+        response = newsAPI.get_top_headlines(page_size=3)
 
-            if not response["articles"]:
-                await message.edit_text("📪No Articles Found!⚠️")
-        elif response["status"] == "error":
-            await message.edit_text(response["message"])
-
+    except NewsAPIException as e:
+        if e.get_code() == "rateLimited":
+            await message.answer(msg.api_rate_limited())  # type: ignore
         else:
-            await message.edit_text(str(response))
+            await message.answer("🙁 Unknown API Error!!⚠️")  # type: ignore
+
+    else:
+        if isinstance(message, types.Message):
+            if response["status"] == "ok":
+                for article in response["articles"]:
+                    if article["title"] in ("[Removed]", None):
+                        continue
+                    await message.answer(msg.article_to_str(article=article))
+
+                if not response["articles"]:
+                    await message.edit_text("📪No Articles Found!⚠️")
+            elif response["status"] == "error":
+                await message.edit_text(response["message"])
+
+            else:
+                await message.edit_text(str(response))
 
 
 @menu_router.message()

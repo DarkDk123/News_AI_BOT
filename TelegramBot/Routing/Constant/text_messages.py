@@ -93,6 +93,9 @@ def sel_countries():
 def no_quick():
     return "***⚠️ _Quick Updates_ is Available for Registered Users Only! ⚠️***"
 
+def api_rate_limited() -> str:
+    return "😢 Sorry, API rate limit exceeded, Try after few hours⏳"
+
 def article_to_str(article: dict) -> str:
     title = article.get('title', "NA")
     description = article.get('description', "NA")
