@@ -85,7 +85,7 @@ async def select_country(message: types.Message, state: FSMContext, bot: Bot) ->
             chat_id=message.chat.id,
         )
         country_id = int(message.text) if message.text.isnumeric() else None  # type: ignore
-        
+
         if (not country_id) or 1 > country_id or country_id > 17:
             try:
                 await main_message.edit_text(  # type: ignore
@@ -115,7 +115,7 @@ async def select_country(message: types.Message, state: FSMContext, bot: Bot) ->
 @rr.message(Registration.sel_news_topics)
 async def select_news_topics(message: types.Message, state: FSMContext) -> None:
     try:
-        topics = list(map(lambda x: x.casefold().strip(), message.text.split(",")))  # type: ignore
+        topics = list(map(lambda x: x.casefold().strip() if len(x) > 3 else x.upper().strip(), message.text.split(",")))  # type: ignore
         if not topics:
             await message.answer(
                 "Please enter valid topic string \ni.e. AI, Data, Something"

@@ -76,7 +76,7 @@ async def select_news_topics(
             message_id=data.get("main_message_id"),
             chat_id=message.chat.id,
         )
-        topics = list(map(lambda x: x.casefold().strip(), message.text.split(",")))  # type: ignore
+        topics = list(map(lambda x: x.casefold().strip() if len(x)>3 else x.upper().strip(), message.text.split(",")))  # type: ignore
         if not topics:
             await main_message.edit_text(  # type: ignore
                 "Please enter valid topic string \ni.e. AI, Data, Something"
@@ -122,7 +122,7 @@ async def sel_country_callback(
 
     if isinstance(message, types.Message):
         if callback.data.startswith("topic:"):  # type:ignore
-            topic = callback.data.removeprefix("topic:").casefold()  # type: ignore
+            topic = topic.casefold().strip() if len(topic:=callback.data.removeprefix("topic:"))>3 else topic.upper().strip() # type: ignore
             await state.update_data(tempDict={"topics": topic})
 
         await message.edit_text(text="Select Country")

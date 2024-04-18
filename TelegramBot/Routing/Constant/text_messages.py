@@ -5,6 +5,7 @@ Most of the text message responses are declared here!
 """
 
 from aiogram.utils import markdown as m
+from datetime import datetime
 
 
 def welcome_message(username: str = "User") -> str:
@@ -78,26 +79,52 @@ def support() -> str:
     Please Support me At following: 💝
     """
 
+
 def sel_countries():
-    country_list_str = "\n".join(f"{i}. {item}" for i, item in enumerate(countries, start=1))
+    country_list_str = "\n".join(
+        f"{i}. {item}" for i, item in enumerate(countries, start=1)
+    )
     return f"""
     _Select a country :_ 
     
     {country_list_str}
     """
 
-def article_to_str(article: dict) -> str:
-    return f"""
-## 📰 **Title**: {article.get('title', "NA")}
-📅 **Published At**: {article.get('publishedAt')}
-👤 **Author**: {article.get('author')}
-🔍 **Description**: {article.get('description')}
-🔗 **[Read More]({article.get('url', article.get('source', {}).get('name'))})**
 
+def article_to_str(article: dict) -> str:
+    title = article.get('title', "NA")
+    description = article.get('description', "NA")
+    url = article.get('url', article.get('source', {}).get('name'))
+    img_url = article.get("urlToImage", "")
+    date = _format_time_str(article.get('publishedAt'))
+    author = article.get('author') if article.get('author') else "Someone!"
+
+    return f"""
+••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+        `📰 Title: `   ***_{title}_***
+    
+                        🔍 **`Description`**
+→ {description}
+
+**[🔗 Read More]({url})** [.]({img_url})
+
+📅  **`Published At`**: {date}
+🧔 **`by`** {author}
+
+••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 """
 
-def _get_country(id_:int):
-    return list(countries.keys())[id_-1]
+
+def _get_country(id_: int):
+    return list(countries.keys())[id_ - 1]
+
+
+def _format_time_str(date_string) -> str:
+    try:
+        date_obj = datetime.strptime(date_string[:-1], "%Y-%m-%dT%H:%M:%S")
+        return date_obj.strftime("%d %b, %y, %I:%M %p")
+    except:
+        return "sometime!"
 
 ## Countries data dictionary
 countries = {
