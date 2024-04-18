@@ -102,7 +102,7 @@ menu_markups: dict = {
         inline_keyboard=[
             [
                 types.InlineKeyboardButton(
-                    text="Quick Updates", callback_data="show_results"
+                    text="Quick Updates", callback_data="quick_updates"
                 ),
                 types.InlineKeyboardButton(
                     text="Select Topics", callback_data="sel_topics_callback"

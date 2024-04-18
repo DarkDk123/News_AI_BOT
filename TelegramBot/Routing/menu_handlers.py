@@ -36,6 +36,29 @@ async def start_menu(callback: types.CallbackQuery, bot: Bot) -> None:
             )
 
 
+@menu_router.callback_query(F.data == "quick_updates")
+async def quick_update(callback: types.CallbackQuery, state: FSMContext) -> None:
+    message =callback.message
+    data = await state.get_data()
+
+    if isinstance(message, types.Message):
+        if not data.get("is_registered"):
+            new_msg = await message.answer(msg.no_quick())
+            t.sleep(3)
+            await new_msg.delete()
+        else:
+            callback = types.CallbackQuery(
+                id="done",
+                from_user=callback.from_user,  # type: ignore
+                chat_instance=message.chat.type,
+                message=message,  # type: ignore
+                data="show_personalized_news",
+            )
+            
+            await show_news(callback, state)
+        
+
+
 @menu_router.callback_query(F.data == "sel_topics_callback")
 async def sel_topics_callback(callback: types.CallbackQuery) -> None:
     message = callback.message
@@ -76,7 +99,7 @@ async def select_news_topics(
             message_id=data.get("main_message_id"),
             chat_id=message.chat.id,
         )
-        topics = list(map(lambda x: x.casefold().strip() if len(x)>3 else x.upper().strip(), message.text.split(",")))  # type: ignore
+        topics = list(map(lambda x: x.casefold().strip() if len(x) > 3 else x.upper().strip(), message.text.split(",")))  # type: ignore
         if not topics:
             await main_message.edit_text(  # type: ignore
                 "Please enter valid topic string \ni.e. AI, Data, Something"
@@ -122,7 +145,7 @@ async def sel_country_callback(
 
     if isinstance(message, types.Message):
         if callback.data.startswith("topic:"):  # type:ignore
-            topic = topic.casefold().strip() if len(topic:=callback.data.removeprefix("topic:"))>3 else topic.upper().strip() # type: ignore
+            topic = topic.casefold().strip() if len(topic := callback.data.removeprefix("topic:")) > 3 else topic.upper().strip()  # type: ignore
             await state.update_data(tempDict={"topics": topic})
 
         await message.edit_text(text="Select Country")
@@ -279,10 +302,13 @@ async def nlp_custom_prompt(
 
 
 @menu_router.callback_query(F.data == "show_news")
+@menu_router.callback_query(F.data == "show_personalized_news")
 async def show_news(callback: types.CallbackQuery, state: FSMContext) -> None:
     message = callback.message
     data = await state.get_data()
-    tempDict = data.get("tempDict", {})
+    
+    # Logic for Personalized Vs Temporary News
+    tempDict =  data if (F.data == "show_personalized_news") else data.get("tempDict", {})
 
     sources = newsAPI.get_sources(
         country=msg.countries.get(tempDict.get("country", "India"))
@@ -292,7 +318,9 @@ async def show_news(callback: types.CallbackQuery, state: FSMContext) -> None:
     sources = get_sources_by_country(
         msg.countries.get(tempDict.get("country", "India"), "in")
     )
-    response = newsAPI.get_everything(q=topics, sources=sources, sort_by="relevancy", page_size=3)
+    response = newsAPI.get_everything(
+        q=topics, sources=sources, sort_by="relevancy", page_size=3
+    )
 
     if isinstance(message, types.Message):
         if response["status"] == "ok":

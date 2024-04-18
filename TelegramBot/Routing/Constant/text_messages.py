@@ -90,6 +90,8 @@ def sel_countries():
     {country_list_str}
     """
 
+def no_quick():
+    return "***⚠️ _Quick Updates_ is Available for Registered Users Only! ⚠️***"
 
 def article_to_str(article: dict) -> str:
     title = article.get('title', "NA")
