@@ -263,7 +263,7 @@ async def nlp_callback(
         # Get message to edit
         await message.edit_text(text="Just Wait🌚")
 
-        await state.update_data(main_message=message.message_id)
+        await state.update_data(main_message_id=message.message_id)
 
         await message.edit_text(text="Please Enter prompt : ")  # type:ignore
 
