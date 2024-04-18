@@ -86,6 +86,15 @@ def sel_countries():
     {country_list_str}
     """
 
+def article_to_str(article: dict) -> str:
+    return f"""
+## 📰 **Title**: {article.get('title', "NA")}
+📅 **Published At**: {article.get('publishedAt')}
+👤 **Author**: {article.get('author')}
+🔍 **Description**: {article.get('description')}
+🔗 **[Read More]({article.get('url', article.get('source', {}).get('name'))})**
+
+"""
 
 def _get_country(id_:int):
     return list(countries.keys())[id_-1]

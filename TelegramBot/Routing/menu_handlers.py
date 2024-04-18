@@ -17,6 +17,7 @@ from .Constant import custom_markups as cm
 from config.settings import ADMIN_USER
 
 import time as t
+from NewsFetchClasses.Fetch_news import newsAPI, get_sources_by_country
 
 
 @menu_router.callback_query(F.data == "menu_callback")
@@ -147,9 +148,7 @@ async def country_callback(callback: types.CallbackQuery, state: FSMContext) -> 
             data="show_news",
         )
 
-        # await show_news(callback, state)
-        await message.answer(text="Showing news...")
-        await message.delete()
+        await show_news(callback, state)
 
 
 @menu_router.callback_query(F.data == "sel_country_man")
@@ -199,12 +198,11 @@ async def select_country(message: types.Message, state: FSMContext, bot: Bot) ->
                 from_user=message.from_user,  # type: ignore
                 chat_instance=message.chat.type,
                 message=main_message,  # type: ignore
-                data="sel_country_callback",
+                data="show_news",
             )
             await state.set_state(None)
 
-            # await show_news(callback, state)
-            await message.answer(text="Showing news...")
+            await show_news(callback, state)
 
     except Exception as e:
         await message.answer(
@@ -216,7 +214,7 @@ async def select_country(message: types.Message, state: FSMContext, bot: Bot) ->
 
 
 @menu_router.callback_query(F.data == "show_results_head")
-async def show_results_head(callback: types.CallbackQuery) -> None:
+async def show_results_head(callback: types.CallbackQuery, state: FSMContext) -> None:
     message = callback.message
 
     if isinstance(message, types.Message):
@@ -225,11 +223,10 @@ async def show_results_head(callback: types.CallbackQuery) -> None:
             from_user=message.from_user,  # type: ignore
             chat_instance=message.chat.type,
             message=message,  # type: ignore
-            data="sel_country_callback",
+            data="show_news_headlines",
         )
 
-        # await show_news(callback, state)
-        await message.answer(text="Showing Headlines")
+        await show_news_headlines(callback, state)
 
 
 @menu_router.callback_query(F.data == "NLP_callback")
@@ -272,14 +269,66 @@ async def nlp_custom_prompt(
             from_user=message.from_user,  # type: ignore
             chat_instance=message.chat.type,
             message=main_message,  # type: ignore
-            data="sel_country_callback",
+            data="show_news",
         )
         await state.set_state(None)
         await message.delete()
-        # await show_news(callback, state)
-        await main_message.edit_text(text="Showing news...")  # type: ignore
+        await show_news(callback, state)
     else:
         await message.answer(text="Provide a valid prompt!!")
+
+
+@menu_router.callback_query(F.data == "show_news")
+async def show_news(callback: types.CallbackQuery, state: FSMContext) -> None:
+    message = callback.message
+    data = await state.get_data()
+    tempDict = data.get("tempDict", {})
+
+    sources = newsAPI.get_sources(
+        country=msg.countries.get(tempDict.get("country", "India"))
+    )  # getting sources available in country!
+
+    topics = "|".join(tempDict.get("topics", ["tech", "python"]))
+    sources = get_sources_by_country(
+        msg.countries.get(tempDict.get("country", "India"), "in")
+    )
+    response = newsAPI.get_everything(q=topics, sources=sources, sort_by="relevancy", page_size=3)
+
+    if isinstance(message, types.Message):
+        if response["status"] == "ok":
+            for article in response["articles"]:
+                if article["title"] in ("[Removed]", None):
+                    continue
+                await message.answer(msg.article_to_str(article=article))
+
+            if not response["articles"]:
+                await message.edit_text("📪No Articles Found!⚠️")
+        elif response["status"] == "error":
+            await message.edit_text(response["message"])
+
+        else:
+            await message.edit_text(str(response))
+
+
+@menu_router.callback_query(F.data == "show_news_headlines")
+async def show_news_headlines(callback: types.CallbackQuery, state) -> None:
+    message = callback.message
+    response = newsAPI.get_top_headlines(page_size=3)
+
+    if isinstance(message, types.Message):
+        if response["status"] == "ok":
+            for article in response["articles"]:
+                if article["title"] in ("[Removed]", None):
+                    continue
+                await message.answer(msg.article_to_str(article=article))
+
+            if not response["articles"]:
+                await message.edit_text("📪No Articles Found!⚠️")
+        elif response["status"] == "error":
+            await message.edit_text(response["message"])
+
+        else:
+            await message.edit_text(str(response))
 
 
 @menu_router.message()
