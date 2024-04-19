@@ -17,6 +17,7 @@ from .Constant import custom_markups as cm
 from config.settings import ADMIN_USER
 
 import time as t
+import re
 from NewsFetchClasses.Fetch_news import newsAPI, get_sources_by_country
 from newsapi.newsapi_exception import NewsAPIException
 
@@ -104,8 +105,7 @@ async def select_news_topics(
             await main_message.edit_text(  # type: ignore
                 "Please enter valid topic string \ni.e. AI, Data, Something"
             )
-        # TODO: Logical Error, allow isalpha to have white spaces also
-        elif not all(map(str.isalpha, topics)):
+        elif not all(map(lambda x: re.match(re.compile(r"^[a-zA-Z\s]*$"), x), topics)):
             await main_message.edit_text(  # type: ignore
                 "Topics should be alphabet only!\n Separated by ','"
             )
@@ -309,7 +309,9 @@ async def show_news(callback: types.CallbackQuery, state: FSMContext) -> None:
 
     # Logic for Personalized Vs Temporary News
     tempDict = (
-        data if (F.data == "show_personalized_news") else data.get("tempDict", {})
+        data
+        if (callback.data == "show_personalized_news")
+        else data.get("tempDict", {})
     )
 
     try:

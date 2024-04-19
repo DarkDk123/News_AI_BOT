@@ -15,7 +15,7 @@ from .routers import registration_router as rr
 from .fsm import Registration
 
 from config.settings import ADMIN_USER
-
+import re
 
 @rr.callback_query(F.data == "correct_name_yes")
 async def correct_name(callback: types.CallbackQuery, state: FSMContext) -> None:
@@ -120,8 +120,7 @@ async def select_news_topics(message: types.Message, state: FSMContext) -> None:
             await message.answer(
                 "Please enter valid topic string \ni.e. AI, Data, Something"
             )
-        # TODO: Logical Error, allow isalpha to have white spaces also
-        elif not all(map(str.isalpha, topics)):
+        elif not all(map(lambda x: re.match(re.compile(r"^[a-zA-Z\s]*$"), x), topics)):
             print(topics)
             await message.answer("Topics should be alphabet only!\n Separated by ','")
 
