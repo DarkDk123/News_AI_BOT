@@ -23,7 +23,7 @@ from newsapi.newsapi_exception import NewsAPIException
 
 
 @menu_router.callback_query(F.data == "menu_callback")
-async def start_menu(callback: types.CallbackQuery, bot: Bot) -> None:
+async def start_menu(callback: types.CallbackQuery) -> None:
     message = callback.message
 
     if isinstance(message, types.Message):
@@ -284,7 +284,7 @@ async def nlp_custom_prompt(
         main_message = await bot.edit_message_text(
             text="Just Wait🌚",
             chat_id=message.chat.id,
-            message_id=(await state.get_data()).get("main_message", message.message_id),
+            message_id=(await state.get_data()).get("main_message_id", message.message_id),
         )
 
         callback = types.CallbackQuery(

@@ -11,20 +11,34 @@ from aiogram.fsm.context import FSMContext
 from .Constant import text_messages as msg  # Constant message texts
 from .Constant import custom_markups as cm  # Custom Markups
 from .routers import command_router
+from .menu_handlers import start_menu
 
-import sys
 
-sys.path.append("./")
 from NewsFetchClasses.Fetch_news import newsAPI
 
 
 # Start/Restart the Conversation
 @command_router.message(filters.Command("start", "restart", ignore_case=True))
-async def start(message: types.Message) -> None:
-    await message.answer(
-        msg.welcome_message(username=message.from_user.first_name),  # type: ignore
-        reply_markup=cm.register_or_guest,
-    )
+async def start(message: types.Message, state: FSMContext) -> None:
+    data = await state.get_data()
+
+    if data.get("is_registered"):
+        to_edit = await message.answer("You're Registered!")
+        await message.delete()
+        callback = types.CallbackQuery(
+            id="registered_user",
+            chat_instance=message.chat.type,
+            from_user=message.from_user,  # type: ignore
+            message=to_edit
+        )
+
+        await start_menu(callback)
+
+    else:
+        await message.answer(
+            msg.welcome_message(username=message.from_user.first_name),  # type: ignore
+            reply_markup=cm.register_or_guest,
+        )
 
 
 # Help command : shows list of commands
@@ -145,7 +159,7 @@ async def clear_chat(message: types.Message, bot: Bot, state: FSMContext):
 
         sleep(0.8)
         await message.edit_text(f"clearing in {t} seconds...")
-        
+
     for id in range(message.message_id, 0, -1):
         try:
             await bot.delete_message(chat_id=message.chat.id, message_id=id)
