@@ -1,5 +1,6 @@
 # -------------Imports--------------------------------------
 import google.generativeai as genai
+import google.ai.generativelanguage as glm
 from dotenv import load_dotenv  # To load .evn file
 import os
 
@@ -23,40 +24,42 @@ class GeminiAI:
         )
 
         # Model creation
-        self.model = genai.GenerativeModel(
+        self.__model = genai.GenerativeModel(
             model_name=model, generation_config=generation_config
         )
         self.chat: genai.ChatSession = None  # type: ignore
 
-    async def generate_text_async(
-        self,
-        input_: str,
-    ) -> str:
+    async def generate_text_async(self, input_: str) -> str:
+        """Used for async content generation independently of Chat Session."""
+
         async_response: types.AsyncGenerateContentResponse = (
-            await self.model.generate_content_async(contents=input_)
+            await self.__model.generate_content_async(contents=input_)
         )
         return async_response.text
 
-    def _create_chat(self) -> None:
-        self.chat = self.model.start_chat()
+    def create_new_chat(self) -> genai.ChatSession:
+        """Creating new `chatSession` for each user."""
+        return self.__model.start_chat()
 
-    async def generate_text_async_chat(self, input_: str) -> str:
-        """Generates text asynchronously using a chat instance.
-
-        If a chat instance does not exist, a new one is created.
+    async def generate_text_async_chat(
+        self, input_: str, chat: genai.ChatSession, tools: list[glm.Tool]
+    ) -> types.AsyncGenerateContentResponse:
+        """Generates `Function call` asynchronously using a chat instance.
 
         Args:
             `input_:` The input text to generate a response for.
-
+            `chat`: Chat Session instance unique to each user.
+            `tools`: List of available `function definitions`
         Returns:
-            The generated text.
+            The Generated `Function Call` or sometimes `text`
         """
 
-        if not self.chat:
-            self._create_chat()
-
         async_response: types.AsyncGenerateContentResponse = (
-            await self.chat.send_message_async(content=input_)
+            await chat.send_message_async(content=input_, tools=tools)
         )
 
-        return async_response.text
+        return async_response
+
+
+# Gemini client Object
+AI = GeminiAI()

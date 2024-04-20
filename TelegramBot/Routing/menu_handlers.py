@@ -20,6 +20,7 @@ import time as t
 import re
 from NewsFetchClasses.Fetch_news import newsAPI, get_sources_by_country
 from newsapi.newsapi_exception import NewsAPIException
+from .NLP_processor import extract_features, create_new_chat, load_chat_json, chat_to_json
 
 
 @menu_router.callback_query(F.data == "menu_callback")
@@ -276,15 +277,33 @@ async def nlp_custom_prompt(
         data = await state.get_data()
         tempDict: dict = data.get("tempDict", {})
 
-        # Method to extract topics, country and source from given prompt
-        topics, country, source = _extract_features(message.text).values()
-        tempDict.update(topics=topics, country=country, source=source)
-        await state.update_data(tempDict=tempDict)
+        # Chat Object to continue contextual conversation
+        chat = (
+            load_chat_json(tempDict.get("chatSession", ""))
+            if tempDict.get("chatSession")
+            else create_new_chat()
+        )
+
+        # Method to extract topics, country and language from given prompt
+        features = await extract_features(message.text, chat=chat)
+        
+        # Save chatSession
+        # tempDict.update(chatSession=chat_to_json(chat))
+        # await state.update_data(tempDict=tempDict)
+
+        if isinstance(features, str):
+            await message.answer(features)
+            return None # Keep user on the same state.
+        else:
+            tempDict.update(**features)
+            await state.update_data(tempDict=tempDict)
 
         main_message = await bot.edit_message_text(
             text="Just Wait🌚",
             chat_id=message.chat.id,
-            message_id=(await state.get_data()).get("main_message_id", message.message_id),
+            message_id=(await state.get_data()).get(
+                "main_message_id", message.message_id
+            ),
         )
 
         callback = types.CallbackQuery(
@@ -317,7 +336,7 @@ async def show_news(callback: types.CallbackQuery, state: FSMContext) -> None:
     try:
         topics = "|".join(tempDict.get("topics", ["tech", "python"]))
         sources = get_sources_by_country(
-            msg.countries.get(tempDict.get("country", "India"), "in")
+            msg.countries.get(tempDict.get("country"))  # type: ignore
         )
         response = newsAPI.get_everything(
             q=topics, sources=sources, sort_by="relevancy", page_size=3
@@ -392,12 +411,3 @@ async def handle_rubbish(message: types.Message, bot: Bot) -> None:
 
     await message.delete()
     await b_message.delete()
-
-
-def _extract_features(prompt: str):
-    topics = []
-    country = ""
-    source = ""
-    # Logic for extracting features from prompt
-
-    return {"topics": topics, "country": country, "source": source}

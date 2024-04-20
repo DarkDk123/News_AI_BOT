@@ -151,3 +151,7 @@ countries = {
     "United States": "us",
     "South Africa": "za",
 }
+
+
+## Languages allowed
+languages = ["ar", "de", "en", "es", "fr", "he", "it", "nl", "no", "pt", "ru", "sv", "ud", "zh"]
