@@ -10,17 +10,15 @@ read more here : [Official article]("https://ai.google.dev/gemini-api/docs/funct
 from GenAI.Gemini import AI
 
 import google.ai.generativelanguage as glm
-import google.generativeai as genai
 
 from .Constant.text_messages import countries, languages
-import json
 
 # Function as JSON dictionary for Gemini `Tools`
 func = {
     "function_declarations": [
         {
             "name": "get_everything",
-            "description": "Search through millions of articles from over 30,000 large and small news sources and blogs. Refer to the official News API documentation for details on search syntax and examples.",
+            "description": "You're `TeleBot` to Search through millions of articles from over 30,000 large and small news sources and blogs. Refer to the official News API documentation for details on search syntax and examples.",
             "parameters": {
                 "type_": "OBJECT",
                 "properties": {
@@ -45,23 +43,26 @@ func = {
 }
 
 
-async def extract_features(prompt: str, chat: genai.ChatSession) -> str | dict:
+async def extract_features(prompt: str) -> str | dict:
     """
     Extracts topics, country and language (if available) from the NLP prompt using `Gemini`
     """
-    response = await AI.generate_text_async_chat(
-        prompt, chat=chat, tools=[glm.Tool(func)]
-    )
+    response = await AI.generate_text_async(prompt, tools=[glm.Tool(func)])
     try:
         fc = response.candidates[0].content.parts[0].function_call
-        print()
-        if not fc.args: raise Exception("Function call not returned by Gemini")
+        if not fc.args:
+            raise Exception("Function call not returned by Gemini")
     except Exception as e:
-        print(e, response)
-        if response.text:
+        if response.candidates[0].finish_reason != 1:
+            if response.candidates[0].finish_reason == 3:
+                return "We can't have a conversation like that!🤫"
+            else:
+                return "I can't proceed with that request! 😓"
+        
+        elif response.text:
             return response.text
         else:
-            return "Something bad"
+            return "Something bad happened!"
 
     topics = list(fc.args["q"] if "q" in fc.args else [])  # type: ignore
     country = (
@@ -78,21 +79,3 @@ async def extract_features(prompt: str, chat: genai.ChatSession) -> str | dict:
 
     print(topics, country, language)
     return {"topics": topics, "country": country, "language": language}
-
-
-create_new_chat = AI.create_new_chat
-
-
-def chat_to_json(chat: genai.ChatSession) -> str:
-    """Function to convert `ChatSession` to `json` string"""
-    return json.dumps(chat.history)
-
-
-def load_chat_json(chat: str) -> genai.ChatSession:
-    """Function to load chat session from `json` string"""
-    history = json.loads(chat)
-
-    return genai.ChatSession(
-        model=genai.get_model("gemini-pro"),
-        history=history
-    )

@@ -29,13 +29,22 @@ class GeminiAI:
         )
         self.chat: genai.ChatSession = None  # type: ignore
 
-    async def generate_text_async(self, input_: str) -> str:
-        """Used for async content generation independently of Chat Session."""
+    async def generate_text_async(
+        self, input_: str, tools: list[glm.Tool]
+    ) -> types.AsyncGenerateContentResponse:
+        """Generates `Function call` asynchronously independently of Chat Session.
+
+        Args:
+            `input_:` The input text to generate a response for.
+            `tools`: List of available `function definitions`
+        Returns:
+            The Generated `Function Call` or sometimes `text` as Response object
+        """
 
         async_response: types.AsyncGenerateContentResponse = (
-            await self.__model.generate_content_async(contents=input_)
+            await self.__model.generate_content_async(contents=input_, tools=tools)
         )
-        return async_response.text
+        return async_response
 
     def create_new_chat(self) -> genai.ChatSession:
         """Creating new `chatSession` for each user."""

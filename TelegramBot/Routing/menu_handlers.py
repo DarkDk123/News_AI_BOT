@@ -20,7 +20,7 @@ import time as t
 import re
 from NewsFetchClasses.Fetch_news import newsAPI, get_sources_by_country
 from newsapi.newsapi_exception import NewsAPIException
-from .NLP_processor import extract_features, create_new_chat, load_chat_json, chat_to_json
+from .NLP_processor import extract_features
 
 
 @menu_router.callback_query(F.data == "menu_callback")
@@ -277,20 +277,9 @@ async def nlp_custom_prompt(
         data = await state.get_data()
         tempDict: dict = data.get("tempDict", {})
 
-        # Chat Object to continue contextual conversation
-        chat = (
-            load_chat_json(tempDict.get("chatSession", ""))
-            if tempDict.get("chatSession")
-            else create_new_chat()
-        )
-
         # Method to extract topics, country and language from given prompt
-        features = await extract_features(message.text, chat=chat)
+        features = await extract_features(message.text)
         
-        # Save chatSession
-        # tempDict.update(chatSession=chat_to_json(chat))
-        # await state.update_data(tempDict=tempDict)
-
         if isinstance(features, str):
             await message.answer(features)
             return None # Keep user on the same state.
@@ -338,8 +327,10 @@ async def show_news(callback: types.CallbackQuery, state: FSMContext) -> None:
         sources = get_sources_by_country(
             msg.countries.get(tempDict.get("country"))  # type: ignore
         )
+        language = tempDict.get('language', None) # Get language if provided
+
         response = newsAPI.get_everything(
-            q=topics, sources=sources, sort_by="relevancy", page_size=3
+            q=topics, sources=sources, sort_by="relevancy", page_size=3, language=language
         )
 
     except NewsAPIException as e:
