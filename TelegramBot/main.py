@@ -14,7 +14,6 @@ from aiogram import Dispatcher
 from bot_instance import BOT, set_bot_features
 from Routing import register_routers
 from storage import storage
-keepAlive()
 
 # Main Bot Logger
 logger = logging.getLogger("Main_BOT_Logger")
@@ -32,6 +31,7 @@ async def main() -> None:
 
 if __name__ == "__main__":
     try:
+        keepAlive()
         logging.basicConfig(level=logging.INFO, stream=sys.stdout)
         asyncio.run(main())
 
