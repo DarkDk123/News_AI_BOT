@@ -10,7 +10,7 @@ import sys
 
 from aiogram import Dispatcher
 
-from bot_instance import BOT, menu_buttons
+from bot_instance import BOT, set_bot_features
 from Routing import register_routers
 from storage import storage
 
@@ -24,8 +24,9 @@ register_routers(DP)  # Registering required Routers
 
 
 async def main() -> None:
-    await menu_buttons(BOT)
+    await set_bot_features(BOT)
     await DP.start_polling(BOT)
+
 
 if __name__ == "__main__":
     try:
