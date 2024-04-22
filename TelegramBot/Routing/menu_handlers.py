@@ -28,15 +28,9 @@ async def start_menu(callback: types.CallbackQuery) -> None:
     message = callback.message
 
     if isinstance(message, types.Message):
-        if "TeleNews Bot" in message.text:  # type: ignore
-            await message.answer(
-                text="*Main Menu*", reply_markup=cm.menu_markups.get("main_menu")
-            )
-        else:
-            await message.edit_text("*Main Menu*")
-            await message.edit_reply_markup(
-                reply_markup=cm.menu_markups.get("main_menu")
-            )
+        await message.answer(
+            text="*Main Menu*", reply_markup=cm.menu_markups.get("main_menu")
+        )
 
 
 @menu_router.callback_query(F.data == "quick_updates")
@@ -125,7 +119,7 @@ async def select_news_topics(
             )
 
             # await message.delete()
-            await state.set_state(None)
+            await state.set_state(MainMenu.get_custom_prompt)
             await sel_country_callback(callback, state)
 
     except Exception as e:
@@ -224,7 +218,7 @@ async def select_country(message: types.Message, state: FSMContext, bot: Bot) ->
                 message=main_message,  # type: ignore
                 data="show_news",
             )
-            await state.set_state(None)
+            await state.set_state(MainMenu.get_custom_prompt)
 
             await show_news(callback, state)
 
@@ -273,12 +267,12 @@ async def nlp_callback(
 async def nlp_custom_prompt(
     message: types.Message, state: FSMContext, bot: Bot
 ) -> None:
-    if message.text:
+    if message.text and not message.text.startswith("/"):
         data = await state.get_data()
         tempDict: dict = data.get("tempDict", {})
 
         # Method to extract topics, country and language from given prompt
-        features = await extract_features(message.text)
+        features = await extract_features(msg.query_template(message.text))
         
         if isinstance(features, str):
             await message.answer(features)
@@ -287,26 +281,18 @@ async def nlp_custom_prompt(
             tempDict.update(**features)
             await state.update_data(tempDict=tempDict)
 
-        main_message = await bot.edit_message_text(
-            text="Just Wait🌚",
-            chat_id=message.chat.id,
-            message_id=(await state.get_data()).get(
-                "main_message_id", message.message_id
-            ),
-        )
-
         callback = types.CallbackQuery(
             id="done",
             from_user=message.from_user,  # type: ignore
             chat_instance=message.chat.type,
-            message=main_message,  # type: ignore
+            message=message,
             data="show_news",
         )
-        await state.set_state(None)
+        # await state.set_state() # Keep state to Custom Prompt
         await message.delete()
         await show_news(callback, state)
     else:
-        await message.answer(text="Provide a valid prompt!!")
+        await handle_rubbish(message)
 
 
 @menu_router.callback_query(F.data == "show_news")
@@ -349,12 +335,12 @@ async def show_news(callback: types.CallbackQuery, state: FSMContext) -> None:
                     await message.answer(msg.article_to_str(article=article))
 
                 if not response["articles"]:
-                    await message.edit_text("📪No Articles Found!⚠️")
+                    await message.answer("📪No Articles Found!⚠️")
             elif response["status"] == "error":
-                await message.edit_text(response["message"])
+                await message.answer(response["message"])
 
             else:
-                await message.edit_text(str(response))
+                await message.answer(str(response))
 
 
 @menu_router.callback_query(F.data == "show_news_headlines")
@@ -388,7 +374,7 @@ async def show_news_headlines(callback: types.CallbackQuery, state) -> None:
 
 
 @menu_router.message()
-async def handle_rubbish(message: types.Message, bot: Bot) -> None:
+async def handle_rubbish(message: types.Message) -> None:
     if message.text:
         print(message.text)
         b_message = await message.answer("❌ Invalid Message or Command!! 😵")

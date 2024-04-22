@@ -12,7 +12,8 @@ from .Constant import text_messages as msg
 from .Constant import custom_markups as cm
 
 from .routers import registration_router as rr
-from .fsm import Registration
+from .fsm import Registration, MainMenu
+from .menu_handlers import start_menu
 
 from config.settings import ADMIN_USER
 import re
@@ -126,9 +127,19 @@ async def select_news_topics(message: types.Message, state: FSMContext) -> None:
 
         else:
             await state.update_data(topics=topics, is_registered=True)
-            await state.set_state(None)
+            await state.set_state(MainMenu.get_custom_prompt)
             await message.answer("*Registration Complete!!*✅")
 
             # Now we have to start main menu
+            callback = types.CallbackQuery(
+                data="menu_callback",
+                id = "unique_",
+                chat_instance=message.chat.type,
+                from_user=message.from_user, # type: ignore
+                message = message
+            )
+
+            await start_menu(callback)
+            
     except:
         await message.answer("Something Went Wrong, try Again!!")

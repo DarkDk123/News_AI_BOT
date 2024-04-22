@@ -18,7 +18,7 @@ func = {
     "function_declarations": [
         {
             "name": "get_everything",
-            "description": "You're `TeleBot` to Search through millions of articles from over 30,000 large and small news sources and blogs. Refer to the official News API documentation for details on search syntax and examples.",
+            "description": "Search through millions of articles from over 30,000 large and small news sources and blogs. Refer to the official News API documentation for details on search syntax and examples.",
             "parameters": {
                 "type_": "OBJECT",
                 "properties": {
@@ -36,7 +36,7 @@ func = {
                         "description": "The 2-letter ISO-639-1 code of the language you want to get headlines for.",
                     },
                 },
-                "required": ["q"],
+                # "required": ["q"], # getting anything if want news from whole country!
             },
         }
     ]
@@ -58,7 +58,7 @@ async def extract_features(prompt: str) -> str | dict:
                 return "We can't have a conversation like that!🤫"
             else:
                 return "I can't proceed with that request! 😓"
-        
+
         elif response.text:
             return response.text
         else:

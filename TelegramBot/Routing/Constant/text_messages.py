@@ -6,7 +6,7 @@ Most of the text message responses are declared here!
 
 from aiogram.utils import markdown as m
 from datetime import datetime
-
+from config.settings import ADMIN_USER
 
 def welcome_message(username: str = "User") -> str:
 
@@ -16,6 +16,8 @@ def welcome_message(username: str = "User") -> str:
     This is the only Bot you need to get
     {m.bold("Top News")} from various sources including personalized
     updates.
+
+    >>>> ***You can also provide NLP queries directly!!***
     """
 
 
@@ -95,6 +97,18 @@ def no_quick():
 
 def api_rate_limited() -> str:
     return "😢 Sorry, API rate limit exceeded, Try after few hours⏳"
+
+def query_template(user_query:str):
+    return f"""
+    You role:
+        You're name is `TeleBot` to search from millions of articles and you're sole purpose is to find articles relevant to user query"
+        Remember you can just search for articles based on user query.
+        You're developed in India by {ADMIN_USER} (your developer), so you are Indian!
+
+    User Query: "{user_query}"
+
+    Based on the above, TeleBot, Answer.
+    """
 
 def article_to_str(article: dict) -> str:
     title = article.get('title', "NA")

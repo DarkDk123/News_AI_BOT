@@ -11,7 +11,7 @@ from aiogram.fsm.context import FSMContext
 from .Constant import text_messages as msg  # Constant message texts
 from .Constant import custom_markups as cm  # Custom Markups
 from .routers import command_router
-from .menu_handlers import start_menu
+from .menu_handlers import start_menu, MainMenu
 
 
 from NewsFetchClasses.Fetch_news import newsAPI
@@ -21,7 +21,7 @@ from NewsFetchClasses.Fetch_news import newsAPI
 @command_router.message(filters.Command("start", "restart", ignore_case=True))
 async def start(message: types.Message, state: FSMContext) -> None:
     data = await state.get_data()
-
+    await state.set_state(MainMenu.get_custom_prompt)
     if data.get("is_registered"):
         to_edit = await message.answer("You're Registered!")
         await message.delete()
@@ -153,7 +153,7 @@ async def clear_chat(message: types.Message, bot: Bot, state: FSMContext):
 
     message = await message.reply("Going to clear chat in 5 seconds...")
 
-    await state.set_state(None)
+    await state.set_state(MainMenu.get_custom_prompt)
     for t in range(4, 0, -1):
         from time import sleep
 
