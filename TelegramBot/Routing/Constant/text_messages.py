@@ -6,7 +6,7 @@ Most of the text message responses are declared here!
 
 from aiogram.utils import markdown as m, formatting as fm
 from datetime import datetime
-from config.settings import ADMIN_USER
+from config.settings import ADMIN_USER, BOT_USER
 
 
 def welcome_message(username: str = "User") -> str:
@@ -131,7 +131,8 @@ _____________________________________
 
 <b>📅 Published At:</b> {date}
 <b>🗣️ <code>by</code></b> {author}
-_____________________________________
+_____________________________________ 
+💖 {BOT_USER}
 """
 
 

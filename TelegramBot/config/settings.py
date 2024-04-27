@@ -19,3 +19,5 @@ LINKEDIN_URL = os.environ["LINKEDIN_URL"]
 GITHUB_URL = os.environ["GITHUB_URL"]
 
 ADMIN_USER = os.environ["ADMIN_USER"]
+
+BOT_USER = os.environ["BOT_USER"]
