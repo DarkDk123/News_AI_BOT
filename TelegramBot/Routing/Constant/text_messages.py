@@ -4,108 +4,103 @@
 Most of the text message responses are declared here!
 """
 
-from aiogram.utils import markdown as m
+from aiogram.utils import markdown as m, formatting as fm
 from datetime import datetime
 from config.settings import ADMIN_USER
 
 
 def welcome_message(username: str = "User") -> str:
 
-    return f"""Hy, {m.bold(username)}!!
-            Welcome to the TeleNews Bot
+    return f"""Hy, {m.hbold(username)}!!
+            Welcome to the <code>TeleNews</code> Bot
 
     This is the only Bot you need to get
-    {m.bold("Top News")} from various sources including personalized
+    <b>"Top News"</b> from various sources including personalized
     updates.
 
-    >>>> ***You can also provide NLP queries directly!!***
+    {m.hblockquote("You can also provide NLP queries directly!!")}
     """
 
 
 def help_message() -> str:
+    commands_list = (
+        "/start, /restart - Start/Restart the Bot Chat\n",
+        "/help - Show this help message\n",
+        "/destroy - Destroy User Data\n",
+        "/sources - List of Sources for custom query inputs\n",
+        "/support - Support Our Project\n",
+        "/mydetails - Get User's saved details\n",
+        "/register - Invoke Registration Process\n",
+        "/clear - Clear Chat Completely\n"
+    )
     return f"""
-            📃 *List of Commands*
-    
-    1. /start, /restart - Start/Restart the Bot Chat
+📃 <b>List of Commands</b>
 
-    2. /help - Show this help message
-
-    3. /destroy - Destroy User Data
-
-    4. /sources - List of Sources for custom query inputs
-
-    5. /support - Support Our Project
-
-    6. /mydetails - Get User's saved details
-
-    7. /register - Invoke Registration Process.
-    """
+{fm.as_numbered_list(*commands_list, fmt="{}. ").as_html()}
+"""
 
 
 def details_message(data: dict) -> str:
     return f"""
-        *Hey {data.get('name')}!*
+<b>Hey {data.get('name')}!</b>
 
-        ### You're interested topics are:
-                {data.get('topics')}
+<b><i>💝 You're interested in following topics :</i></b>
+{fm.as_marked_list(*data.get('topics'), marker="  → ").as_html()}
         
-        ### You're from : 
-                {data.get('country')}
-        """
+<b>🏠 You're from : </b> {data.get('country')}
+"""
 
 
 def reg_init(username: str) -> str:
     return f"""
-        ##Registration Process Started!! 🌟
+<b>Registration Process Started!! 🌟</b>
         
-        👋 Hey, {username}!
-        Is this correct name for you??
-        """
+👋 Hey, {m.hbold(username)}!
+    Is this correct name for you??
+"""
 
 
 def locations() -> str:
     return """
-        *Please select your country!!*
+        <b>Please select your country!!</b>
         """
 
 
 def sources(scr: list) -> str:
-    result = "This are some of the Available Sources: \n"
-    for i, s in enumerate(scr, 1):
-        result += f"{i}. {s} \n"
+    result = m.hbold(
+        f"📃 This are some of the Available Sources: \n\n"
+        + f"{fm.as_numbered_list(*scr, fmt='{}. ').as_html()}"
+    )
 
     return result
 
 
 def support() -> str:
-    return """
-    Please Support me At following: 💝
+    return f"""
+    {m.hblockquote("Please Support me At following: 💝")}
     """
 
 
 def sel_countries():
-    country_list_str = "\n".join(
-        f"{i}. {item}" for i, item in enumerate(countries, start=1)
-    )
     return f"""
-    _Select a country :_ 
-    
-    {country_list_str}
+    <b>Select a country : </b> 
+
+    {fm.as_numbered_list(*countries, fmt="({}). ").as_html()}
     """
 
 
 def no_quick():
-    return "***⚠️ _Quick Updates_ is Available for Registered Users Only! ⚠️***"
+    return "<b><i>⚠️ Quick Updates is Available for Registered Users Only! ⚠️</i></b>"
 
 
 def api_rate_limited() -> str:
-    return "😢 Sorry, API rate limit exceeded, Try after few hours⏳"
+    return "<b>😢 Sorry, API rate limit exceeded, Try after few hours⏳</b>"
 
 
 def query_template(user_query: str):
     return f"""
     You role:
-        You're name is `TeleBot` to search from millions of articles and you're sole purpose is to find articles relevant to user query"
+        You're name is `TeleNews` Bot to search from millions of articles and you're sole purpose is to find articles relevant to user query"
         Remember you can just search for articles based on user query.
         You're developed in India by {ADMIN_USER} (your developer), so you are Indian!
 
@@ -124,18 +119,19 @@ def article_to_str(article: dict, index: str) -> str:
     author = article.get("author") if article.get("author") else "Someone!"
 
     return f"""
-*{index}*
-––––––––––––––––––––––
-**`📰 Title: `** {title}
+{m.hide_link(url)} {m.hide_link(img_url if img_url.startswith("http") else "https:/" + img_url)}
+{m.hblockquote("Article : " + index)}
+_____________________________________
+
+<b>{m.hcode("📰 Title ↓")}</b> {m.hblockquote("👉  " + title)}
     
-🔍 **`Description`**
-→ {description}
+<b><code>🔍 Description</code></b>
+{m.hblockquote("→  " + description)}
 
 
-📅  **Published At**: {date}
-🗣️ **`by`** {author}
-
-––––––––––––––––––––[-]({url})[-]({img_url if img_url.startswith("http") else "https:/" + img_url})
+<b>📅 Published At:</b> {date}
+<b>🗣️ <code>by</code></b> {author}
+_____________________________________
 """
 
 

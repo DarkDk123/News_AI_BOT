@@ -68,7 +68,7 @@ registration_markups: dict = {
                     text="India", callback_data="r_country:India"
                 ),
                 types.InlineKeyboardButton(
-                    text="Japan", callback_data="r_country:Japan"
+                    text="Globally", callback_data="r_country:None"
                 ),
             ],
             [
@@ -123,11 +123,11 @@ menu_markups: dict = {
     "sel_topics": types.InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                types.InlineKeyboardButton(text="AI", callback_data="topic:AI"),
-                types.InlineKeyboardButton(text="ML", callback_data="topic:ML"),
+                types.InlineKeyboardButton(text="AI", callback_data="topic:Artificial Intelligence"),
+                types.InlineKeyboardButton(text="ML", callback_data="topic:Machine Learning"),
             ],
             [
-                types.InlineKeyboardButton(text="Tech", callback_data="topic:Tech"),
+                types.InlineKeyboardButton(text="Tech", callback_data="topic:Technology"),
                 types.InlineKeyboardButton(
                     text="Politics", callback_data="topic:Politics"
                 ),
@@ -149,7 +149,7 @@ menu_markups: dict = {
         inline_keyboard=[
             [
                 types.InlineKeyboardButton(text="India", callback_data="country:India"),
-                types.InlineKeyboardButton(text="Japan", callback_data="country:Japan"),
+                types.InlineKeyboardButton(text="Globally", callback_data="country:None"),
             ],
             [
                 types.InlineKeyboardButton(

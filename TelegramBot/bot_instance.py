@@ -14,7 +14,10 @@ import os
 
 # Default Bot Properties
 default_bot_properties = DefaultBotProperties(
-    parse_mode="Markdown", link_preview_prefer_small_media=True, link_preview_show_above_text=True
+    parse_mode="HTML",
+    link_preview=types.LinkPreviewOptions(
+        show_above_text=True, prefer_small_media=True
+    ),
 )
 
 BOT = Bot(os.environ["TELEGRAM_BOT_TOKEN"], default=default_bot_properties)
@@ -35,6 +38,7 @@ async def set_bot_features(BOT: Bot) -> None:
                 command="/register", description="👤 Invoke Registration📝"
             ),
             types.BotCommand(command="/support", description="👍 Support Me 💁‍♂️"),
+            types.BotCommand(command="/clear", description="🧼Clear Chat Completely"),
         ]
     )
 

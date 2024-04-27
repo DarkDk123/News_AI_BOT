@@ -29,7 +29,7 @@ async def start_menu(callback: types.CallbackQuery) -> None:
 
     if isinstance(message, types.Message):
         await message.answer(
-            text="*Main Menu*", reply_markup=cm.menu_markups.get("main_menu")
+            text="<b>Main Menu</b>", reply_markup=cm.menu_markups.get("main_menu")
         )
 
 
@@ -60,7 +60,7 @@ async def sel_topics_callback(callback: types.CallbackQuery) -> None:
     message = callback.message
 
     if isinstance(message, types.Message):
-        await message.edit_text("*Select Topics*")
+        await message.edit_text("<b>Select Topics</b>")
         await message.edit_reply_markup(
             text="Select One Topic!", reply_markup=cm.menu_markups.get("sel_topics")
         )
@@ -73,7 +73,7 @@ async def sel_custom_news_topics_callback(
     await state.set_state(MainMenu.sel_custom_news_topics)
 
     editable_message = await callback.message.answer(  # type: ignore
-        text="Now, Please Enter your favourite topics Separated by *coma (,)*"
+        text="Now, Please Enter your favourite topics Separated by <b><code>coma (,)</code></b>"
     )
 
     await callback.message.delete()  # type: ignore
@@ -98,11 +98,11 @@ async def select_news_topics(
         topics = list(map(lambda x: x.casefold().strip() if len(x) > 3 else x.upper().strip(), message.text.split(",")))  # type: ignore
         if not topics:
             await main_message.edit_text(  # type: ignore
-                "Please enter valid topic string \ni.e. AI, Data, Something"
+                "💀 Please enter valid topic string \ni.e. <code>AI, Data, Something</code>"
             )
         elif not all(map(lambda x: re.match(re.compile(r"^[a-zA-Z\s]*$"), x), topics)):
             await main_message.edit_text(  # type: ignore
-                "Topics should be alphabet only!\n Separated by ','"
+                "Topics should be alphabet only!\n Separated by <code>','</code>"
             )
 
         else:
@@ -124,7 +124,7 @@ async def select_news_topics(
 
     except Exception as e:
         await message.answer(
-            f"Something Went Wrong!!\nContact admin ({ADMIN_USER}) with Screenshot"
+            f"💔Something Went Wrong!!\nPlease Contact admin ({ADMIN_USER}) with Screenshots."
         )
 
     else:
@@ -143,7 +143,7 @@ async def sel_country_callback(
             topic = topic.casefold().strip() if len(topic := callback.data.removeprefix("topic:")) > 3 else topic.upper().strip()  # type: ignore
             await state.update_data(tempDict={"topics": topic})
 
-        await message.edit_text(text="Select Country")
+        await message.edit_text(text="<b>Select Country</b>")
         await message.edit_reply_markup(reply_markup=cm.menu_markups.get("sel_country"))
 
 
@@ -154,7 +154,7 @@ async def country_callback(callback: types.CallbackQuery, state: FSMContext) -> 
     if isinstance(message, types.Message):
         country = callback.data.removeprefix("country:")  # type: ignore
         tempDict = (await state.get_data()).get("tempDict", {})
-        tempDict.update(country=country)
+        tempDict.update(country=country if country != "None" else None)
 
         await state.update_data(tempDict=tempDict)  # Update in Redis database
 
@@ -201,7 +201,7 @@ async def select_country(message: types.Message, state: FSMContext, bot: Bot) ->
         if (not country_id) or 1 > country_id or country_id > 17:
             try:
                 await main_message.edit_text(  # type: ignore
-                    text="*Please, Enter valid Choice*\n" + msg.sel_countries()
+                    text="<b>Please, Enter valid Choice</b>\n" + msg.sel_countries()
                 )
             except Exception as e:
                 await message.answer(str(e))
@@ -224,7 +224,7 @@ async def select_country(message: types.Message, state: FSMContext, bot: Bot) ->
 
     except Exception as e:
         await message.answer(
-            f"Something Went Wrong!!\nContact admin ({ADMIN_USER}) with Screenshot"
+            f"💔Something Went Wrong!!\nPlease Contact admin ({ADMIN_USER}) with Screenshots."
         )
 
     else:
@@ -275,7 +275,7 @@ async def nlp_custom_prompt(
         features = await extract_features(msg.query_template(message.text))
 
         if isinstance(features, str):
-            await message.answer(features)
+            await message.answer(features, parse_mode="Markdown")
             return None  # Keep user on the same state.
         else:
             tempDict.update(**features)
@@ -334,19 +334,25 @@ async def show_news(callback: types.CallbackQuery, state: FSMContext) -> None:
 
         if isinstance(message, types.Message):
             if response["status"] == "ok":
-                for idx, article in zip(
-                    msg.emoji_indexes,
-                    response["articles"],
-                ):
-                    if article["title"] in ("[Removed]", None):
-                        continue
-                    await message.answer(
-                        msg.article_to_str(article=article, index=idx),
-                        reply_markup=cm.get_response_markup(article["url"]),
-                    )
-
                 if not response["articles"]:
-                    await message.answer("📪No Articles Found!⚠️")
+                    message = await message.answer("📪No Articles Found!⚠️")
+                    t.sleep(2)
+                    await message.delete()
+                else:
+                    await message.answer(
+                        f"<blockquote>🔍 Here are News Articles about {', '.join(topics)} 📰</blockquote>"
+                    )
+                    for idx, article in zip(
+                        msg.emoji_indexes,
+                        response["articles"],
+                    ):
+                        if article["title"] in ("[Removed]", None):
+                            continue
+                        await message.answer(
+                            msg.article_to_str(article=article, index=idx),
+                            reply_markup=cm.get_response_markup(article["url"]),
+                        )
+
             elif response["status"] == "error":
                 await message.answer(response["message"])
 
@@ -370,16 +376,21 @@ async def show_news_headlines(callback: types.CallbackQuery, state) -> None:
     else:
         if isinstance(message, types.Message):
             if response["status"] == "ok":
-                for idx, article in zip(msg.emoji_indexes, response["articles"]):
-                    if article["title"] in ("[Removed]", None):
-                        continue
-                    await message.answer(
-                        msg.article_to_str(article=article, index=idx),
-                        reply_markup=cm.get_response_markup(article["url"]),
-                    )
-
                 if not response["articles"]:
-                    await message.edit_text("📪No Articles Found!⚠️")
+                    message = await message.answer("📪No Articles Found!⚠️")
+                    t.sleep(2)
+                    await message.delete()
+                else:
+                    await message.answer(
+                        "<blockquote>🔍 Here are Top News Headlines 📰</blockquote>"
+                    )
+                    for idx, article in zip(msg.emoji_indexes, response["articles"]):
+                        if article["title"] in ("[Removed]", None):
+                            continue
+                        await message.answer(
+                            msg.article_to_str(article=article, index=idx),
+                            reply_markup=cm.get_response_markup(article["url"]),
+                        )
             elif response["status"] == "error":
                 await message.edit_text(response["message"])
 

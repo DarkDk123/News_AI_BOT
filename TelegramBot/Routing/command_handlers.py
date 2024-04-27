@@ -23,7 +23,7 @@ async def start(message: types.Message, state: FSMContext) -> None:
     data = await state.get_data()
     await state.set_state(MainMenu.get_custom_prompt)
     if data.get("is_registered"):
-        to_edit = await message.answer("You're Registered!")
+        to_edit = await message.answer("You're already Registered! 👍")
         await message.delete()
         callback = types.CallbackQuery(
             id="registered_user",
@@ -51,7 +51,7 @@ async def help_(message: types.Message) -> None:
 @command_router.message(filters.Command("destroy", ignore_case=True))
 async def destroy(message: types.Message, state: FSMContext) -> None:
     if not (await state.get_data()).get("is_registered"):
-        await message.answer("You are not registered yet!!")
+        await message.answer("<b>🔕You are not registered yet!!</b>")
 
     else:
         await message.answer(
@@ -77,7 +77,7 @@ async def destroy_yes(callback: types.CallbackQuery, state: FSMContext) -> None:
 # destroy_no (cancel) callback
 @command_router.callback_query(F.data == "destroy_no")
 async def destroy_no(callback: types.CallbackQuery, state: FSMContext) -> None:
-    await callback.message.answer("🫂 You Are Safe!!")  # type: ignore
+    await callback.message.answer("<blockquote>🫂 You Are Safe!!</blockquote>")  # type: ignore
 
 
 # Get list of available News Sources.
@@ -127,10 +127,10 @@ async def register_callback(
     message = message if isinstance(message, types.Message) else message.message  # type: ignore
 
     if (await state.get_data()).get("is_registered"):
-        await message.answer("You are already registered")
+        await message.answer("You're already Registered! 👍")
         await mydetails(message, state)
         await message.answer(
-            text="Want to re-register?",
+            text="<b>Want to re-register? 🤔</b>",
             reply_markup=cm.registration_markups.get("re-register"),
         )
     else:
@@ -151,14 +151,14 @@ async def re_register_callback(
 @command_router.message(filters.Command("clear"))
 async def clear_chat(message: types.Message, bot: Bot, state: FSMContext):
 
-    message = await message.reply("Going to clear chat in 5 seconds...")
+    message = await message.reply("☠️🧹Going to clear chat in 5 seconds...")
 
     await state.set_state(MainMenu.get_custom_prompt)
     for t in range(4, 0, -1):
         from time import sleep
 
         sleep(0.8)
-        await message.edit_text(f"clearing in {t} seconds...")
+        await message.edit_text(f"🧹clearing in {t} seconds...")
 
     for id in range(message.message_id, 0, -1):
         try:
