@@ -14,7 +14,7 @@ import os
 
 # Default Bot Properties
 default_bot_properties = DefaultBotProperties(
-    parse_mode="Markdown", disable_notification=False
+    parse_mode="Markdown", link_preview_prefer_small_media=True, link_preview_show_above_text=True
 )
 
 BOT = Bot(os.environ["TELEGRAM_BOT_TOKEN"], default=default_bot_properties)

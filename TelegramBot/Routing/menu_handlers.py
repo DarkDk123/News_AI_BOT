@@ -273,10 +273,10 @@ async def nlp_custom_prompt(
 
         # Method to extract topics, country and language from given prompt
         features = await extract_features(msg.query_template(message.text))
-        
+
         if isinstance(features, str):
             await message.answer(features)
-            return None # Keep user on the same state.
+            return None  # Keep user on the same state.
         else:
             tempDict.update(**features)
             await state.update_data(tempDict=tempDict)
@@ -309,14 +309,19 @@ async def show_news(callback: types.CallbackQuery, state: FSMContext) -> None:
     )
 
     try:
-        topics = "|".join(tempDict.get("topics", ["tech", "python"]))
+        topics = " OR ".join(tempDict.get("topics", ["tech", "python"]))
         sources = get_sources_by_country(
             msg.countries.get(tempDict.get("country"))  # type: ignore
         )
-        language = tempDict.get('language', None) # Get language if provided
+        language = tempDict.get("language", None)  # Get language if provided
 
         response = newsAPI.get_everything(
-            q=topics, sources=sources, sort_by="relevancy", page_size=3, language=language
+            q=topics,
+            sources=sources,
+            sort_by="relevancy",
+            page_size=3,
+            language=language,
+            qintitle=topics,
         )
 
     except NewsAPIException as e:
@@ -329,10 +334,16 @@ async def show_news(callback: types.CallbackQuery, state: FSMContext) -> None:
 
         if isinstance(message, types.Message):
             if response["status"] == "ok":
-                for article in response["articles"]:
+                for idx, article in zip(
+                    msg.emoji_indexes,
+                    response["articles"],
+                ):
                     if article["title"] in ("[Removed]", None):
                         continue
-                    await message.answer(msg.article_to_str(article=article))
+                    await message.answer(
+                        msg.article_to_str(article=article, index=idx),
+                        reply_markup=cm.get_response_markup(article["url"]),
+                    )
 
                 if not response["articles"]:
                     await message.answer("📪No Articles Found!⚠️")
@@ -359,10 +370,13 @@ async def show_news_headlines(callback: types.CallbackQuery, state) -> None:
     else:
         if isinstance(message, types.Message):
             if response["status"] == "ok":
-                for article in response["articles"]:
+                for idx, article in zip(msg.emoji_indexes, response["articles"]):
                     if article["title"] in ("[Removed]", None):
                         continue
-                    await message.answer(msg.article_to_str(article=article))
+                    await message.answer(
+                        msg.article_to_str(article=article, index=idx),
+                        reply_markup=cm.get_response_markup(article["url"]),
+                    )
 
                 if not response["articles"]:
                     await message.edit_text("📪No Articles Found!⚠️")
@@ -371,6 +385,14 @@ async def show_news_headlines(callback: types.CallbackQuery, state) -> None:
 
             else:
                 await message.edit_text(str(response))
+
+
+@menu_router.callback_query(F.data == "delete_article")
+async def delete_article(callback: types.CallbackQuery) -> None:
+    message = callback.message
+
+    if isinstance(message, types.Message):
+        await message.delete()
 
 
 @menu_router.message()

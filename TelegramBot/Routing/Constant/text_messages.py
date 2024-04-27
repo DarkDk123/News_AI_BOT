@@ -8,6 +8,7 @@ from aiogram.utils import markdown as m
 from datetime import datetime
 from config.settings import ADMIN_USER
 
+
 def welcome_message(username: str = "User") -> str:
 
     return f"""Hy, {m.bold(username)}!!
@@ -92,13 +93,16 @@ def sel_countries():
     {country_list_str}
     """
 
+
 def no_quick():
     return "***⚠️ _Quick Updates_ is Available for Registered Users Only! ⚠️***"
+
 
 def api_rate_limited() -> str:
     return "😢 Sorry, API rate limit exceeded, Try after few hours⏳"
 
-def query_template(user_query:str):
+
+def query_template(user_query: str):
     return f"""
     You role:
         You're name is `TeleBot` to search from millions of articles and you're sole purpose is to find articles relevant to user query"
@@ -110,27 +114,28 @@ def query_template(user_query:str):
     Based on the above, TeleBot, Answer.
     """
 
-def article_to_str(article: dict) -> str:
-    title = article.get('title', "NA")
-    description = article.get('description', "NA")
-    url = article.get('url', article.get('source', {}).get('name'))
+
+def article_to_str(article: dict, index: str) -> str:
+    title = article.get("title", "NA")
+    description = article.get("description", "NA")
+    url = article.get("url", article.get("source", {}).get("name"))
     img_url = article.get("urlToImage", "")
-    date = _format_time_str(article.get('publishedAt'))
-    author = article.get('author') if article.get('author') else "Someone!"
+    date = _format_time_str(article.get("publishedAt"))
+    author = article.get("author") if article.get("author") else "Someone!"
 
     return f"""
-••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-        `📰 Title: `   ***_{title}_***
+*{index}*
+––––––––––––––––––––––
+**`📰 Title: `** {title}
     
-                        🔍 **`Description`**
+🔍 **`Description`**
 → {description}
 
-**[🔗 Read More]({url})** [.]({img_url})
 
-📅  **`Published At`**: {date}
-🧔 **`by`** {author}
+📅  **Published At**: {date}
+🗣️ **`by`** {author}
 
-••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+––––––––––––––––––––[-]({url})[-]({img_url if img_url.startswith("http") else "https:/" + img_url})
 """
 
 
@@ -141,9 +146,10 @@ def _get_country(id_: int):
 def _format_time_str(date_string) -> str:
     try:
         date_obj = datetime.strptime(date_string[:-1], "%Y-%m-%dT%H:%M:%S")
-        return date_obj.strftime("%d %b, %y, %I:%M %p")
+        return date_obj.strftime("%d %b, %Y")
     except:
         return "sometime!"
+
 
 ## Countries data dictionary
 countries = {
@@ -168,4 +174,20 @@ countries = {
 
 
 ## Languages allowed
-languages = ["ar", "de", "en", "es", "fr", "he", "it", "nl", "no", "pt", "ru", "sv", "ud", "zh"]
+languages = [
+    "ar",
+    "de",
+    "en",
+    "es",
+    "fr",
+    "he",
+    "it",
+    "nl",
+    "no",
+    "pt",
+    "ru",
+    "sv",
+    "ud",
+    "zh",
+]
+emoji_indexes = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣"]

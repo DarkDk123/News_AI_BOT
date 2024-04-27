@@ -75,7 +75,9 @@ registration_markups: dict = {
                 types.InlineKeyboardButton(
                     text="United States", callback_data="r_country:United States"
                 ),
-                types.InlineKeyboardButton(text="custom", callback_data="r_country_man"),
+                types.InlineKeyboardButton(
+                    text="custom", callback_data="r_country_man"
+                ),
             ],
         ],
         one_time_keyboard=True,
@@ -169,6 +171,21 @@ menu_markups: dict = {
     ),
 }
 
+
 # Independent Objects!
+def get_response_markup(url: str) -> types.InlineKeyboardMarkup:
+    article_buttons = types.InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                types.InlineKeyboardButton(text="🔗 Read More", url=url),
+                types.InlineKeyboardButton(
+                    text="🚮 Delete", callback_data="delete_article"
+                ),
+            ]
+        ]
+    )
+
+    return article_buttons
+
 
 remove_keyboard = types.ReplyKeyboardRemove()

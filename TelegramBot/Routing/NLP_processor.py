@@ -68,7 +68,7 @@ async def extract_features(prompt: str) -> str | dict:
     country = (
         fc.args["country"]
         if "country" in fc.args and fc.args["country"] in countries
-        else "India"
+        else None
     )
 
     language = (
