@@ -7,6 +7,7 @@ Most of the text message responses are declared here!
 from aiogram.utils import markdown as m, formatting as fm
 from datetime import datetime
 from config.settings import ADMIN_USER, BOT_USER
+from config.settings import GITHUB_URL
 
 
 def welcome_message(username: str = "User") -> str:
@@ -76,7 +77,7 @@ def sources(scr: list) -> str:
 
 
 def support() -> str:
-    return f"""
+    return f"""{m.hide_link(GITHUB_URL)}
     {m.hblockquote("Please Support me At following: 💝")}
     """
 

@@ -105,7 +105,9 @@ menu_markups: dict = {
             [
                 types.InlineKeyboardButton(
                     text="Quick Updates", callback_data="quick_updates"
-                ),
+                )
+            ],
+            [
                 types.InlineKeyboardButton(
                     text="Select Topics", callback_data="sel_topics_callback"
                 ),
@@ -114,6 +116,8 @@ menu_markups: dict = {
                 types.InlineKeyboardButton(
                     text="Get TOP Headlines", callback_data="show_results_head"
                 ),
+            ],
+            [
                 types.InlineKeyboardButton(
                     text="Custom Prompt", callback_data="NLP_callback"
                 ),
@@ -123,11 +127,17 @@ menu_markups: dict = {
     "sel_topics": types.InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                types.InlineKeyboardButton(text="AI", callback_data="topic:Artificial Intelligence"),
-                types.InlineKeyboardButton(text="ML", callback_data="topic:Machine Learning"),
+                types.InlineKeyboardButton(
+                    text="AI", callback_data="topic:Artificial Intelligence"
+                ),
+                types.InlineKeyboardButton(
+                    text="ML", callback_data="topic:Machine Learning"
+                ),
             ],
             [
-                types.InlineKeyboardButton(text="Tech", callback_data="topic:Technology"),
+                types.InlineKeyboardButton(
+                    text="Tech", callback_data="topic:Technology"
+                ),
                 types.InlineKeyboardButton(
                     text="Politics", callback_data="topic:Politics"
                 ),
@@ -149,7 +159,9 @@ menu_markups: dict = {
         inline_keyboard=[
             [
                 types.InlineKeyboardButton(text="India", callback_data="country:India"),
-                types.InlineKeyboardButton(text="Globally", callback_data="country:None"),
+                types.InlineKeyboardButton(
+                    text="Globally", callback_data="country:None"
+                ),
             ],
             [
                 types.InlineKeyboardButton(

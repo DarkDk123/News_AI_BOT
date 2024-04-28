@@ -14,7 +14,7 @@ from .fsm import MainMenu
 
 from .Constant import text_messages as msg
 from .Constant import custom_markups as cm
-from config.settings import ADMIN_USER
+from config.settings import ADMIN_USER, BOT_USER
 
 import time as t
 import re
@@ -28,9 +28,14 @@ async def start_menu(callback: types.CallbackQuery) -> None:
     message = callback.message
 
     if isinstance(message, types.Message):
-        await message.answer(
-            text="<b>Main Menu</b>", reply_markup=cm.menu_markups.get("main_menu")
-        )
+        if message.from_user.username == BOT_USER[1:]:  # type: ignore
+            await message.edit_text(
+                text="<b>Main Menu</b>", reply_markup=cm.menu_markups.get("main_menu")
+            )
+        else:
+            await message.answer(
+                text="<b>Main Menu</b>", reply_markup=cm.menu_markups.get("main_menu")
+            )
 
 
 @menu_router.callback_query(F.data == "quick_updates")
@@ -60,9 +65,8 @@ async def sel_topics_callback(callback: types.CallbackQuery) -> None:
     message = callback.message
 
     if isinstance(message, types.Message):
-        await message.edit_text("<b>Select Topics</b>")
-        await message.edit_reply_markup(
-            text="Select One Topic!", reply_markup=cm.menu_markups.get("sel_topics")
+        await message.edit_text(
+            "<b>Select Topics 🤳</b>", reply_markup=cm.menu_markups.get("sel_topics")
         )
 
 
@@ -141,10 +145,12 @@ async def sel_country_callback(
     if isinstance(message, types.Message):
         if callback.data.startswith("topic:"):  # type:ignore
             topic = topic.casefold().strip() if len(topic := callback.data.removeprefix("topic:")) > 3 else topic.upper().strip()  # type: ignore
-            await state.update_data(tempDict={"topics": topic})
+            await state.update_data(tempDict={"topics": [topic]})
 
-        await message.edit_text(text="<b>Select Country</b>")
-        await message.edit_reply_markup(reply_markup=cm.menu_markups.get("sel_country"))
+        await message.edit_text(
+            text="<b>Select Country</b>",
+            reply_markup=cm.menu_markups.get("sel_country"),
+        )
 
 
 @menu_router.callback_query(F.data.startswith("country:"))
@@ -340,7 +346,7 @@ async def show_news(callback: types.CallbackQuery, state: FSMContext) -> None:
                     await message.delete()
                 else:
                     await message.answer(
-                        f"<blockquote>🔍 Here are News Articles about {', '.join(topics)} 📰</blockquote>"
+                        f"<blockquote>🔍 Here are News Articles about {', '.join(topics.split(' OR '))} 📰</blockquote>"
                     )
                     for idx, article in zip(
                         msg.emoji_indexes,

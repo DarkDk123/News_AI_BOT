@@ -56,7 +56,7 @@ async def destroy(message: types.Message, state: FSMContext) -> None:
     else:
         await message.answer(
             f"""
-            *{(await state.get_data())['name']}*, Do you really want to *destroy your Data*??
+            <b>{(await state.get_data())['name']}</b>, Do you really want to <code>destroy your Data</code>??
             You will need to re-register!
             """,
             reply_markup=cm.destroy_data_or_not,
