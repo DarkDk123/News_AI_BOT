@@ -1,0 +1,21 @@
+# Github Action for running only on PR merge.
+
+name: Deployment to Render on Pull Request Merge
+
+on:
+  pull_request:
+    branches: [ main ]
+    types:
+      - "closed"
+    
+jobs:
+  deploy_if_merged:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Render
+        uses: johnbeynon/render-deploy-action@v0.0.8  # Use the Render deployment action
+        with:
+          service-id: ${{ secrets.MY_RENDER_SERVICE_ID }}
+          api-key: ${{ secrets.MY_RENDER_API_KEY }}
+          wait-for-success: true
