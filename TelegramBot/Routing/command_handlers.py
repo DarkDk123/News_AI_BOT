@@ -12,6 +12,8 @@ from .Constant import text_messages as msg  # Constant message texts
 from .Constant import custom_markups as cm  # Custom Markups
 from .routers import command_router
 from .menu_handlers import start_menu, MainMenu
+from time import sleep
+import asyncio
 
 
 from NewsFetchClasses.Fetch_news import newsAPI
@@ -29,7 +31,7 @@ async def start(message: types.Message, state: FSMContext) -> None:
             id="registered_user",
             chat_instance=message.chat.type,
             from_user=message.from_user,  # type: ignore
-            message=to_edit
+            message=to_edit,
         )
 
         await start_menu(callback)
@@ -155,13 +157,15 @@ async def clear_chat(message: types.Message, bot: Bot, state: FSMContext):
 
     await state.set_state(MainMenu.get_custom_prompt)
     for t in range(4, 0, -1):
-        from time import sleep
-
         sleep(0.8)
         await message.edit_text(f"🧹clearing in {t} seconds...")
 
-    for id in range(message.message_id, 0, -1):
-        try:
-            await bot.delete_message(chat_id=message.chat.id, message_id=id)
-        except:
-            pass
+    # Create Async Tasks to delete all messages together!
+    tasks = (
+        asyncio.create_task(bot.delete_message(chat_id=message.chat.id, message_id=i))
+        for i in range(message.message_id, 0, -1)
+    )
+
+    await asyncio.gather(
+        *tasks, return_exceptions=True
+    )  # Wait for all deletion tasks to complete
