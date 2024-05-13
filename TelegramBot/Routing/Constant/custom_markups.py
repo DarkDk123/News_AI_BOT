@@ -198,6 +198,3 @@ def get_response_markup(url: str) -> types.InlineKeyboardMarkup:
     )
 
     return article_buttons
-
-
-remove_keyboard = types.ReplyKeyboardRemove()

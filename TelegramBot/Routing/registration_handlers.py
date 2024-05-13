@@ -54,7 +54,6 @@ async def country_callback(callback: types.CallbackQuery, state: FSMContext) -> 
 
         await message.reply(
             text="Now, Please Enter your favourite topics Separated by <b>coma (,)</b>",
-            reply_markup=cm.remove_keyboard,
         )
 
         await state.set_state(Registration.sel_news_topics)
