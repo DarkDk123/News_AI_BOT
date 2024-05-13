@@ -6,8 +6,7 @@ Most of the text message responses are declared here!
 
 from aiogram.utils import markdown as m, formatting as fm
 from datetime import datetime
-from config.settings import ADMIN_USER, BOT_USER
-from config.settings import GITHUB_URL
+from config.settings import ADMIN_USER, BOT_USER, GITHUB_URL
 
 
 def welcome_message(username: str = "User") -> str:
@@ -32,7 +31,7 @@ def help_message() -> str:
         "/support - Support Our Project\n",
         "/mydetails - Get User's saved details\n",
         "/register - Invoke Registration Process\n",
-        "/clear - Clear Chat Completely\n"
+        "/clear - Clear Chat Completely\n",
     )
     return f"""
 📃 <b>List of Commands</b>
@@ -99,11 +98,17 @@ def api_rate_limited() -> str:
 
 
 def query_template(user_query: str):
+    GITHUB_URL_formatted = GITHUB_URL.replace("_", "\_")  # type:ignore
     return f"""
     You role:
         You're name is `TeleNews` Bot to search from millions of articles and you're sole purpose is to find articles relevant to user query"
         Remember you can just search for articles based on user query.
         You're developed in India by {ADMIN_USER} (your developer), so you are Indian!
+
+        If someone asks to contribute then answer kindly with following details:
+        
+        GitHub repository at: {GITHUB_URL_formatted}
+        It's open source and anyone interested can contribute in it!
 
     User Query: "{user_query}"
 
@@ -128,7 +133,6 @@ _____________________________________
     
 <b><code>🔍 Description</code></b>
 {m.hblockquote("→  " + description)}
-
 
 <b>📅 Published At:</b> {date}
 <b>🗣️ <code>by</code></b> {author}
