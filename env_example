@@ -1,0 +1,23 @@
+# To contribute and run locally!
+# You should create a new file with ".env" name & NOT include it in your git!
+
+
+# API_keys | Get your own
+NEWSAPI_KEY = "https://newsapi.org/"
+NEWSDATA_KEY = "https://newsdata.io/"  # Currently not used!
+GEMINI_KEY =  "https://aistudio.google.com/app/apikey"
+TELEGRAM_BOT_TOKEN= "https://web.telegram.org/k/#@BotFather"
+
+# Redis Configurations | I'm running on redis cloud
+REDIS_HOST = "https://app.redislabs.com/#/databases"
+REDIS_PORT = 0000
+REDIS_PASSWORD = "##"
+
+
+# Socials | for /support command
+LINKEDIN_URL = "https://www.linkedin.com/in/dipeshrathore1"
+GITHUB_URL = "https://github.com/DarkDk123/News_AI_BOT"
+
+# Usernames
+ADMIN_USER = "@darkdk123"
+BOT_USER = "@TeleNewsPy_Bot"
