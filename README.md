@@ -4,10 +4,7 @@
   <img src="./images/Bot_Profile.jpeg" alt="Bot Profile" width="30%">
 
 </div>
-
 <br>
-
----
 <h1 align="center">
 
 [TeleNewsPy🕊️](https://web.telegram.org/k/#@TeleNewsPy_Bot)
