@@ -52,7 +52,7 @@ async def extract_features(prompt: str) -> str | dict:
         fc = response.candidates[0].content.parts[0].function_call
         if not fc.args:
             raise Exception("Function call not returned by Gemini")
-    except Exception as e:
+    except Exception as _:
         if response.candidates[0].finish_reason != 1:
             if response.candidates[0].finish_reason == 3:
                 return "We can't have a conversation like that!🤫"

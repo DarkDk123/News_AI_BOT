@@ -5,7 +5,8 @@ It's the Entry point of the "Telegram BOT"
 """
 
 # ______________Helping_Imports___________
-import asyncio, logging
+import asyncio
+import logging
 import sys
 from keep_alive import keepAlive
 

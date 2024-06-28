@@ -5,7 +5,7 @@ This file contains all `handlers` relating to `registration`.
 It uses a `FSM` to transition between different states.
 """
 
-from aiogram import filters, types, Bot, F
+from aiogram import types, Bot, F
 from aiogram.fsm.context import FSMContext
 
 from .Constant import text_messages as msg
@@ -104,7 +104,7 @@ async def select_country(message: types.Message, state: FSMContext, bot: Bot) ->
 
             await state.set_state(Registration.sel_news_topics)
 
-    except Exception as e:
+    except Exception as _:
         await message.answer(
             f"💔Something Went Wrong!!\nPlease Contact admin ({ADMIN_USER}) with Screenshots."
         )

@@ -1,7 +1,8 @@
 # -------------Imports--------------------------------------
 import google.generativeai as genai
 import google.ai.generativelanguage as glm
-from dotenv import load_dotenv  # To load .evn file
+
+# from dotenv import load_dotenv  # To load .evn file
 import os
 
 # ---------------Other_Imports----------------------------------
