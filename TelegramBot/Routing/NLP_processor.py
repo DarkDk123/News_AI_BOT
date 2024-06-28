@@ -23,7 +23,7 @@ func = {
                 "type_": "OBJECT",
                 "properties": {
                     "q": {
-                        "type_": "ARRAY",
+                        "type_": "STRING",
                         "description": "Array of Keywords or phrases to search for in the article title and body. Abbreviations should be UpperCased!, single topic should also be in an Array",
                     },
                     # get_everything doesn't take "country", instead i'll use it to fetch "sources"
