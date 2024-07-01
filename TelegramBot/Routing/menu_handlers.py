@@ -126,7 +126,7 @@ async def select_news_topics(
             await state.set_state(MainMenu.get_custom_prompt)
             await sel_country_callback(callback, state)
 
-    except Exception as e:
+    except Exception as _:
         await message.answer(
             f"💔Something Went Wrong!!\nPlease Contact admin ({ADMIN_USER}) with Screenshots."
         )
@@ -228,7 +228,7 @@ async def select_country(message: types.Message, state: FSMContext, bot: Bot) ->
 
             await show_news(callback, state)
 
-    except Exception as e:
+    except Exception as _:
         await message.answer(
             f"💔Something Went Wrong!!\nPlease Contact admin ({ADMIN_USER}) with Screenshots."
         )
