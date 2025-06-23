@@ -58,7 +58,7 @@ async def destroy(message: types.Message, state: FSMContext) -> None:
     else:
         await message.answer(
             f"""
-            <b>{(await state.get_data())['name']}</b>, Do you really want to <code>destroy your Data</code>??
+            <b>{(await state.get_data())["name"]}</b>, Do you really want to <code>destroy your Data</code>??
             You will need to re-register!
             """,
             reply_markup=cm.destroy_data_or_not,
@@ -152,7 +152,6 @@ async def re_register_callback(
 
 @command_router.message(filters.Command("clear"))
 async def clear_chat(message: types.Message, bot: Bot, state: FSMContext):
-
     message = await message.reply("☠️🧹Going to clear chat in 5 seconds...")
 
     await state.set_state(MainMenu.get_custom_prompt)

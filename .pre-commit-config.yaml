@@ -1,0 +1,52 @@
+# These hooks use the exact same tools and versions as 'make lint' for consistency
+
+default_language_version:
+  python: python3.12
+
+repos:
+
+  # Syntax and Basic Checks (matches quick-checks job)
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # Configuration files validation
+      - id: check-yaml
+        args: ["--unsafe"]
+      - id: check-json
+      - id: check-toml
+
+      # File formatting
+      - id: trailing-whitespace
+        args: ["--markdown-linebreak-ext=md"]
+      - id: fix-byte-order-marker
+
+      # Python specific
+      - id: debug-statements
+      - id: check-docstring-first
+
+      # Branch protection
+      - id: no-commit-to-branch
+        args: ["--branch", "main", "--branch", "develop"]
+
+  # Code Quality and Linting
+  - repo: local
+    hooks:
+      # Ruff Formatting
+      - id: ruff-format
+        name: Ruff format
+        entry: ruff
+        args: [format]
+        types: [python]
+        language: python
+        pass_filenames: false
+        stages: [pre-commit]
+
+      # Ruff Linting and Auto-fix
+      - id: ruff-check
+        name: Ruff check & fix
+        entry: ruff
+        args: ["check", "--fix", "--exit-non-zero-on-fix"]
+        types: [python]
+        language: python
+        pass_filenames: false
+        stages: [pre-commit]

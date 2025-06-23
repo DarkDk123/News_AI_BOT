@@ -29,7 +29,7 @@ It uses [NewsAPI](https://newsapi.org) to fetch recent news data!
 
 
 <div align="center">
-   
+
 ### BOT GIFs
 
 <img src=./images/demo.gif height=400></img>
@@ -69,14 +69,14 @@ There are two ways to use the Telegram News AI Bot:
 ### Installation
 
 #### 1. Clone the repository:
-    
+
    ```sh
    git clone https://github.com/DarkDk123/News_AI_BOT.git
    cd News_AI_BOT
    ```
 
 #### 2. Install the required dependencies:
-    
+
    ```sh
    pip install -r "requirements.txt"
    ```
@@ -87,7 +87,7 @@ There are two ways to use the Telegram News AI Bot:
 ### Running the Bot
 
 #### 1. Run the `main.py` file from root directory:
-    
+
    ```sh
    python "TelegramBot/main.py" # Command should be the same!
    ```
