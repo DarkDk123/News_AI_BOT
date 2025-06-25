@@ -35,8 +35,7 @@ repos:
       # Ruff Formatting
       - id: ruff-format
         name: Ruff format
-        entry: ruff
-        args: [format, "--config", ".ruff.toml"]
+        args: ["--config", "ruff.toml"]
         types: [python]
         language: python
         pass_filenames: false
@@ -45,9 +44,7 @@ repos:
       # Ruff Linting and Auto-fix
       - id: ruff-check
         name: Ruff check & fix
-        entry: ruff
-        args:
-          ["check", "--fix", "--exit-non-zero-on-fix", "--config", ".ruff.toml"]
+        args: ["--fix", "--exit-non-zero-on-fix", "--config", "ruff.toml"]
         types: [python]
         language: python
         pass_filenames: false
