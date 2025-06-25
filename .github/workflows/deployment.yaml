@@ -3,10 +3,12 @@
 name: Deployment to Render on Pull Request Merge
 
 on:
-  pull_request:
-    branches: [ main ]
-    types:
-      - "closed"
+  # Temporarily disabled Deployment trigger
+  # pull_request:
+  #   branches: [ main ]
+  #   types:
+  #     - "closed"
+  - workflow_dispatch
 
 jobs:
   deploy_if_merged:
