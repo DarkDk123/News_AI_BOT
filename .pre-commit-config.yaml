@@ -29,13 +29,15 @@ repos:
         args: ["--branch", "main", "--branch", "develop"]
 
   # Code Quality and Linting
-  - repo: local
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+  # Ruff version.
+    rev: v0.12.0
     hooks:
       # Ruff Formatting
       - id: ruff-format
         name: Ruff format
         entry: ruff
-        args: [format]
+        args: [format, "--config", ".ruff.toml"]
         types: [python]
         language: python
         pass_filenames: false
@@ -45,7 +47,7 @@ repos:
       - id: ruff-check
         name: Ruff check & fix
         entry: ruff
-        args: ["check", "--fix", "--exit-non-zero-on-fix"]
+        args: ["check", "--fix", "--exit-non-zero-on-fix", "--config", ".ruff.toml"]
         types: [python]
         language: python
         pass_filenames: false
