@@ -10,7 +10,6 @@ from config.settings import ADMIN_USER, BOT_USER, GITHUB_URL
 
 
 def welcome_message(username: str = "User") -> str:
-
     return f"""Hy, {m.hbold(username)}!!
             Welcome to the <code>TeleNews</code> Bot
 
@@ -42,19 +41,19 @@ def help_message() -> str:
 
 def details_message(data: dict) -> str:
     return f"""
-<b>Hey {data.get('name')}!</b>
+<b>Hey {data.get("name")}!</b>
 
 <b><i>💝 You're interested in following topics :</i></b>
-{fm.as_marked_list(*data.get('topics'), marker="  → ").as_html()}
-        
-<b>🏠 You're from : </b> {data.get('country')}
+{fm.as_marked_list(*data.get("topics"), marker="  → ").as_html()}
+
+<b>🏠 You're from : </b> {data.get("country")}
 """
 
 
 def reg_init(username: str) -> str:
     return f"""
 <b>Registration Process Started!! 🌟</b>
-        
+
 👋 Hey, {m.hbold(username)}!
     Is this correct name for you??
 """
@@ -68,7 +67,7 @@ def locations() -> str:
 
 def sources(scr: list) -> str:
     result = m.hbold(
-        f"📃 This are some of the Available Sources: \n\n"
+        "📃 This are some of the Available Sources: \n\n"
         + f"{fm.as_numbered_list(*scr, fmt='{}. ').as_html()}"
     )
 
@@ -83,7 +82,7 @@ def support() -> str:
 
 def sel_countries():
     return f"""
-    <b>Select a country : </b> 
+    <b>Select a country : </b>
 
     {fm.as_numbered_list(*countries, fmt="({}). ").as_html()}
     """
@@ -106,7 +105,7 @@ def query_template(user_query: str):
         You're developed in India by {ADMIN_USER} (your developer), so you are Indian!
 
         If someone asks to contribute then answer kindly with following details:
-        
+
         GitHub repository at: {GITHUB_URL_formatted}
         It's open source and anyone interested can contribute in it!
 
@@ -130,13 +129,13 @@ def article_to_str(article: dict, index: str) -> str:
 _____________________________________
 
 <b>{m.hcode("📰 Title ↓")}</b> {m.hblockquote("👉  " + title)}
-    
+
 <b><code>🔍 Description</code></b>
 {m.hblockquote("→  " + description)}
 
 <b>📅 Published At:</b> {date}
 <b>🗣️ <code>by</code></b> {author}
-_____________________________________ 
+_____________________________________
 💖 {BOT_USER}
 """
 
@@ -149,8 +148,10 @@ def _format_time_str(date_string) -> str:
     try:
         date_obj = datetime.strptime(date_string[:-1], "%Y-%m-%dT%H:%M:%S")
         return date_obj.strftime("%d %b, %Y")
-    except:
+    except (ValueError, TypeError):
         return "sometime!"
+    except Exception:
+        return "Unable to parse date-time!"
 
 
 ## Countries data dictionary

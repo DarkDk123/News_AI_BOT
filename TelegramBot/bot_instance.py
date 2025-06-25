@@ -46,7 +46,7 @@ async def set_bot_features(BOT: Bot) -> None:
 
     await BOT.set_my_description(
         """
-        
+
 👉 TeleNews🕊️ - Your Go to "Bot" for News at Telegram!
 
 🤖 This Bot can search from millions of articles, & provides curated 📰 News based on your request.

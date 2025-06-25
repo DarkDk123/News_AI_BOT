@@ -29,7 +29,7 @@ It uses [NewsAPI](https://newsapi.org) to fetch recent news data!
 
 
 <div align="center">
-   
+
 ### BOT GIFs
 
 <img src=./images/demo.gif height=400></img>
@@ -69,14 +69,14 @@ There are two ways to use the Telegram News AI Bot:
 ### Installation
 
 #### 1. Clone the repository:
-    
+
    ```sh
    git clone https://github.com/DarkDk123/News_AI_BOT.git
    cd News_AI_BOT
    ```
 
 #### 2. Install the required dependencies:
-    
+
    ```sh
    pip install -r "requirements.txt"
    ```
@@ -87,7 +87,7 @@ There are two ways to use the Telegram News AI Bot:
 ### Running the Bot
 
 #### 1. Run the `main.py` file from root directory:
-    
+
    ```sh
    python "TelegramBot/main.py" # Command should be the same!
    ```
@@ -96,19 +96,56 @@ Once the server is running, the bot will deliver articles to the configured Tele
 You can interact with the bot using the Telegram app to make NLP queries and receive
 interactive news updates based on your queries.
 
-## Contributing
+## Contributing Guidelines
 
-We welcome contributions from the community! To contribute:
+We welcome contributions! Follow these steps:
 
-1. [Fork](https://github.com/DarkDk123/News_AI_BOT/fork) this repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Make your changes.
-4. Commit your changes.
-5. Push to the branch.
-6. Open a pull request.
+1. **[Fork](https://github.com/DarkDk123/News_AI_BOT/fork) the repository** and **clone your fork** locally:
+
+   ```sh
+   git clone https://github.com/your-username/News_AI_BOT.git
+   cd News_AI_BOT
+   ```
+
+2. **Set up the project**:
+
+   ```sh
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+
+3. **Set up pre-commit hooks**:
+
+   ```sh
+   pip install pre-commit
+   pre-commit install # Checks code quality & other formatting.
+   ```
+
+4. **Create a branch**:
+
+   ```sh
+   git checkout -b feature-branch
+   ```
+
+5. **Ensure code quality**:
+
+   * Format: `ruff format --check .`
+   * Lint: `ruff check .`
+
+6. **Make your changes**, then commit and push:
+
+   ```sh
+   git commit -m "Describe your changes"
+   git push origin feature-branch
+   ```
+
+7. **Open a pull request** on GitHub.
+
 
 For any questions or feedback, please open an issue on GitHub or contact the [project maintainers](https://github.com/DarkDk123/News_AI_BOT/contributors).
 
 ## License
 
 This project is licensed under the ***GPL 3.0*** License. See the [`LICENSE`](https://github.com/DarkDk123/News_AI_BOT/blob/main/LICENSE) file for more details.
+

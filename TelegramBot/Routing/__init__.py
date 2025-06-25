@@ -21,3 +21,7 @@ from .routers import register_routers
 from .command_handlers import *  # or specific functions/classes
 from .registration_handlers import *
 from .menu_handlers import *
+
+__all__ = [
+    "register_routers",
+]

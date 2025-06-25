@@ -23,7 +23,9 @@ import re
 async def correct_name(callback: types.CallbackQuery, state: FSMContext) -> None:
     await state.update_data(name=callback.from_user.full_name)  # type: ignore
 
-    await callback.message.answer(msg.locations(), reply_markup=cm.registration_markups["location_prompt"])  # type: ignore
+    await callback.message.answer(
+        msg.locations(), reply_markup=cm.registration_markups["location_prompt"]
+    )  # type: ignore
     await state.set_state(Registration.location_prompt)
 
 
@@ -116,7 +118,12 @@ async def select_country(message: types.Message, state: FSMContext, bot: Bot) ->
 @rr.message(Registration.sel_news_topics)
 async def select_news_topics(message: types.Message, state: FSMContext) -> None:
     try:
-        topics = list(map(lambda x: x.casefold().strip() if len(x) > 3 else x.upper().strip(), message.text.split(",")))  # type: ignore
+        topics = list(
+            map(
+                lambda x: x.casefold().strip() if len(x) > 3 else x.upper().strip(),
+                message.text.split(","),
+            )
+        )  # type: ignore
         if not topics:
             await message.answer(
                 "💀 Please enter valid topic string \ni.e. <code>AI, Data, Something</code>"
@@ -143,7 +150,7 @@ async def select_news_topics(message: types.Message, state: FSMContext) -> None:
 
             await start_menu(callback)
 
-    except:
+    except Exception:
         await message.delete()
         message = await message.answer("Something Went Wrong, try Again!!")
 
