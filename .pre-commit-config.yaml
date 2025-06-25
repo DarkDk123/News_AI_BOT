@@ -4,7 +4,6 @@ default_language_version:
   python: python3.12
 
 repos:
-
   # Syntax and Basic Checks (matches quick-checks job)
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
@@ -30,7 +29,7 @@ repos:
 
   # Code Quality and Linting
   - repo: https://github.com/astral-sh/ruff-pre-commit
-  # Ruff version.
+    # Ruff version.
     rev: v0.12.0
     hooks:
       # Ruff Formatting
@@ -47,7 +46,8 @@ repos:
       - id: ruff-check
         name: Ruff check & fix
         entry: ruff
-        args: ["check", "--fix", "--exit-non-zero-on-fix", "--config", ".ruff.toml"]
+        args:
+          ["check", "--fix", "--exit-non-zero-on-fix", "--config", ".ruff.toml"]
         types: [python]
         language: python
         pass_filenames: false
