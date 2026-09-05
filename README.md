@@ -9,7 +9,7 @@
 
 [TeleNewsPy🕊️](https://web.telegram.org/k/#@TeleNewsPy_Bot)
 
-[![TeleNewsPy Status](https://cronitor.io/badges/WwEpyi/production/_tkad06ybaR-xchTipqEpYL9_10.svg)](https://news-ai-bot.onrender.com)
+[![TeleNewsPy Status](https://img.shields.io/badge/TeleNewsPy%20Status-Suspended%20By%20User-f59e0b?style=flat)](https://news-ai-bot.onrender.com)
 
 ![GitHub stars](https://img.shields.io/github/stars/DarkDk123/News_AI_BOT?style=plastic&label=Stars&color=blue&labelColor=grey&logo=github)
 [![license](https://img.shields.io/github/license/DarkDk123/News_AI_BOT?color=blue&label=License&style=plastic)](https://github.com/DarkDk123/News_AI_BOT/blob/main/LICENSE)
